@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>สรุปโปรเจกต์ classtracking — สมุดชั่วโมงเรียน</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f7f5f0; --paper:#fffdf8; --ink:#1f2328; --muted:#5d636b; --line:#e4dfd4;
+    --accent:#0f6b5c; --accent-soft:#e3f1ed; --warn:#9a5b00; --warn-soft:#fbf0dc;
+    --bad:#a2332b; --bad-soft:#f8e4e1; --good:#1d6f3b; --good-soft:#e2f2e6;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Thai",system-ui,sans-serif;line-height:1.7;font-size:16px}
+  .wrap{max-width:980px;margin:0 auto;padding:40px 20px 80px}
+  header.hero{padding:28px 0 20px;border-bottom:2px solid var(--ink);margin-bottom:28px}
+  .kicker{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-size:clamp(28px,5vw,42px);line-height:1.2;margin:6px 0 10px}
+  .lede{font-size:18px;color:var(--muted);max-width:720px;margin:0}
+  .meta{margin-top:14px;font-size:14px;color:var(--muted)}
+  nav.toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 32px}
+  nav.toc a{font-size:14px;text-decoration:none;color:var(--ink);border:1px solid var(--line);background:var(--paper);padding:6px 12px;border-radius:999px}
+  nav.toc a:hover{border-color:var(--accent);color:var(--accent)}
+  section{margin:0 0 44px}
+  h2{font-size:24px;margin:0 0 6px;display:flex;gap:10px;align-items:baseline}
+  h2 .n{font-size:14px;color:var(--accent);font-weight:700}
+  h3{font-size:17px;margin:20px 0 8px}
+  p.sub{color:var(--muted);margin:0 0 16px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  .stat{font-size:30px;font-weight:700;line-height:1.1}
+  .stat-l{font-size:13px;color:var(--muted)}
+  ul{margin:6px 0;padding-left:20px} li{margin:4px 0}
+  table{width:100%;border-collapse:collapse;background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:15px}
+  th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+  th{background:#efebe2;font-weight:600;font-size:14px}
+  tr:last-child td{border-bottom:none}
+  .tag{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+  .t-good{background:var(--good-soft);color:var(--good)} .t-warn{background:var(--warn-soft);color:var(--warn)}
+  .t-bad{background:var(--bad-soft);color:var(--bad)} .t-acc{background:var(--accent-soft);color:var(--accent)}
+  .pro{border-top:4px solid var(--good)} .con{border-top:4px solid var(--bad)}
+  .pro h3,.con h3{margin-top:0}
+  .callout{border-left:4px solid var(--warn);background:var(--warn-soft);padding:14px 18px;border-radius:0 10px 10px 0}
+  .callout.acc{border-color:var(--accent);background:var(--accent-soft)}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px}
+  .flow span.s{background:var(--paper);border:1px solid var(--line);padding:8px 12px;border-radius:8px}
+  .flow span.a{color:var(--muted)}
+  .timeline{border-left:2px solid var(--line);padding-left:18px;margin-left:6px}
+  .tl{position:relative;margin:0 0 16px}
+  .tl::before{content:"";position:absolute;left:-25px;top:8px;width:12px;height:12px;border-radius:50%;background:var(--accent)}
+  .tl.old::before{background:#b9b2a3}
+  .tl b{display:block}
+  .tl small{color:var(--muted)}
+  code{font-size:13px;background:#efebe2;padding:1px 5px;border-radius:4px}
+  footer{margin-top:50px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+  @media (max-width:600px){ th,td{padding:8px} table{font-size:14px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="kicker">Project summary · classtracking</div>
+  <h1>สมุดชั่วโมงเรียน<br>ระบบติดตามชั่วโมงเรียนพิเศษของลูก</h1>
+  <p class="lede">ถึงวันเรียน LINE ทักมาพร้อมปุ่ม <b>เข้าเรียน / ลา / งดสอน</b> กดในแชทครั้งเดียว ระบบตัดชั่วโมงให้ทันทีและบันทึกลงสมุดบัญชีที่แก้ย้อนหลังไม่ได้ ผู้ปกครองไม่ต้องจดเองและไม่ต้องจำว่าเหลือกี่ชั่วโมง</p>
+  <div class="meta">ช่วงเวลาโปรเจกต์ 23 ส.ค. – 2 พ.ย. 2026 · สถานะ: <span class="tag t-good">ใช้งานจริงในครอบครัว</span> <span class="tag t-warn">ยังไม่เปิดให้คนนอก</span></div>
+</header>
+
+<nav class="toc">
+  <a href="#overview">ภาพรวม</a><a href="#journey">เส้นทางโปรเจกต์</a><a href="#scope">Scope</a>
+  <a href="#usage">การใช้งาน</a><a href="#benefits">ประโยชน์</a><a href="#proscons">ข้อดี–ข้อเสีย</a>
+  <a href="#tech">เทคนิค</a><a href="#risks">ความเสี่ยง</a><a href="#next">ขั้นต่อไป</a>
+</nav>
+
+<section id="overview">
+  <h2><span class="n">01</span>ภาพรวม</h2>
+  <p class="sub">ตัวเลขสำคัญ ณ วันที่ 2 พ.ย. 2026</p>
+  <div class="grid g3">
+    <div class="card"><div class="stat">2 รุ่น</div><div class="stat-l">v1 เว็บแอป (ส.ค.) → v2 LINE OA + LIFF (ต.ค.)</div></div>
+    <div class="card"><div class="stat">145</div><div class="stat-l">commit ในโฟลเดอร์โปรเจกต์</div></div>
+    <div class="card"><div class="stat">13</div><div class="stat-l">migration ฐานข้อมูล (0000–0012)</div></div>
+    <div class="card"><div class="stat">55</div><div class="stat-l">ไฟล์เทสต์ (unit · integration · e2e)</div></div>
+    <div class="card"><div class="stat">~87</div><div class="stat-l">ข้อความ LINE ต่อเดือน (โควตาฟรี 300)</div></div>
+    <div class="card"><div class="stat">29 ต.ค.</div><div class="stat-l">วันย้ายระบบขึ้น v2 (cutover) · เตือนจริงครั้งแรก 31 ต.ค.</div></div>
+  </div>
+  <h3>ปัญหาที่ระบบนี้แก้</h3>
+  <p>ลูกเรียนพิเศษหลายคลาส (เต้น ภาษา ดนตรี) แต่ละที่ขายเป็นแพ็กชั่วโมง ผู้ปกครองต้องจดเองว่ามาเรียนวันไหน ลาวันไหน โรงเรียนงดสอนวันไหน และเหลือกี่ชั่วโมง พอมีหลายคลาสและผู้ปกครองสองคนก็จดหลุดได้ง่าย และเถียงกับโรงเรียนได้ยากเพราะไม่มีหลักฐาน</p>
+</section>
+
+<section id="journey">
+  <h2><span class="n">02</span>เส้นทางโปรเจกต์</h2>
+  <p class="sub">ทำแล้วเรียนรู้ เปลี่ยนทิศเมื่อข้อมูลจริงบอกว่าทางเดิมใช้ไม่ได้</p>
+  <div class="timeline">
+    <div class="tl old"><b>23 ส.ค. — เริ่มโปรเจกต์ (v1)</b><small>ต้นแบบเก็บข้อมูลในเครื่อง → schema Postgres แบบ append-only + hash chain · ทดสอบเจาะ RLS 21 ข้อผ่าน · ขึ้น VPS ของเราเอง</small></div>
+    <div class="tl old"><b>ก.ย. — v1 ออนไลน์</b><small>เว็บแอป + ระบบบัญชีอีเมล/รหัสผ่าน · รองรับลูกหลายคน · ย้ายข้อมูลจากเครื่องขึ้นฐานข้อมูล</small></div>
+    <div class="tl old"><b>11 ก.ย. — audit จาก log จริง</b><small>มี 8 บัญชี ยืนยันอีเมลได้ 2 · คลาส 0 รายการ ⇒ ไม่มีใครใช้จริง เพราะประตูเข้าแอปยากเกินไป (รหัสผ่าน · ยืนยันอีเมล · session หลุดบน iOS) และระบบไม่เคยเตือนวันเรียน</small></div>
+    <div class="tl"><b>29 ต.ค. — ตัดสินใจสร้าง v2 บน LINE</b><small>Next.js + LIFF + LINE OA · login ด้วย LINE ครั้งเดียว · เตือนผ่านแชทพร้อมปุ่ม · สร้าง M0–M7 จบในวันเดียวกันและย้ายระบบขึ้นจริงคืนนั้น</small></div>
+    <div class="tl"><b>30 ต.ค. – 1 พ.ย. — ขัดเกลาและทำ ops</b><small>เตือนก่อนเรียน 60 นาที · กฎเปลี่ยนวันเรียน · backup นอก VPS (restic → Backblaze B2) · health alert ผ่าน Telegram และ healthchecks.io</small></div>
+    <div class="tl"><b>1–2 พ.ย. — PDPA และแผนเปิดตัว</b><small>กลไกลบข้อมูลทั้งครัวเรือน · backup ที่รู้ว่าข้อมูลไหนถูกลบ · ร่างประกาศความเป็นส่วนตัว · แผนเปิดตัว · แยกระบบครู/เทรนเนอร์ออกเป็นอีกโปรเจกต์</small></div>
+  </div>
+</section>
+
+<section id="scope">
+  <h2><span class="n">03</span>Scope — ทำอะไร ไม่ทำอะไร</h2>
+  <div class="grid g2">
+    <div class="card pro">
+      <h3>อยู่ใน scope (v2)</h3>
+      <ul>
+        <li>ผู้ใช้คือ <b>ผู้ปกครอง</b> ใช้เป็นครัวเรือน (2 คนดูข้อมูลชุดเดียวกัน)</li>
+        <li>จัดการลูก · คลาส · วันและเวลาเรียน · ชั่วโมงต่อครั้ง · นโยบายลา (ลาแล้วตัดชั่วโมงหรือไม่ตัด)</li>
+        <li>เติมชั่วโมง (topup) · บันทึกเข้าเรียน / ลา / งดสอน / ขาด / ปรับยอด</li>
+        <li>เตือนผ่าน LINE ก่อนเรียน พร้อมปุ่มตอบในแชท</li>
+        <li>ดูยอดคงเหลือและประวัติในแอป LIFF</li>
+        <li>สมุดบัญชีแก้ย้อนหลังไม่ได้ แก้ผิดด้วยรายการกลับรายการ (reversal)</li>
+        <li>backup · health alert · กลไกลบข้อมูลตาม PDPA</li>
+      </ul>
+    </div>
+    <div class="card con">
+      <h3>นอก scope (ตอนนี้)</h3>
+      <ul>
+        <li>ฟีเจอร์ฝั่งโรงเรียน / ครู / เทรนเนอร์ (แยกไปเป็นโปรเจกต์ใหม่ คนละ LINE OA ไม่ผสมข้อมูล)</li>
+        <li>รับชำระเงิน · แพ็กเกจเสียเงิน</li>
+        <li>เปิดสมัครสาธารณะแบบ self-serve</li>
+        <li>PWA · MINI App · ภาษาอังกฤษ</li>
+        <li>จำกัดจำนวนคลาสแบบทดลอง (ประเมินแล้วว่าไม่ควรทำ)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:14px">
+    <b>ข้อขัดกันที่ต้องตัดสิน:</b> แผนเดิมกำหนดให้ v2 ใช้ในครอบครัวเท่านั้น แต่เป้าหมายล่าสุดคือ "ขายให้ได้มากที่สุด" ต้องปรับ scope ข้อนี้ก่อนเปิดให้คนนอก
+  </div>
+</section>
+
+<section id="usage">
+  <h2><span class="n">04</span>การใช้งาน</h2>
+  <h3>เส้นทางหลัก — วันเรียน</h3>
+  <div class="flow">
+    <span class="s">60 นาทีก่อนเรียน</span><span class="a">→</span>
+    <span class="s">LINE OA ส่งข้อความ + 3 ปุ่ม</span><span class="a">→</span>
+    <span class="s">ผู้ปกครองคนใดคนหนึ่งกด</span><span class="a">→</span>
+    <span class="s">ลงสมุดบัญชีภายใน ~2 วินาที</span><span class="a">→</span>
+    <span class="s">ตอบกลับยืนยันในแชท</span>
+  </div>
+  <table style="margin-top:16px">
+    <tr><th>สถานการณ์</th><th>สิ่งที่เกิดขึ้น</th></tr>
+    <tr><td>กด <b>เข้าเรียน</b></td><td>ตัดชั่วโมงตามที่ตั้งไว้ต่อครั้ง</td></tr>
+    <tr><td>กด <b>ลา</b></td><td>ตัดหรือไม่ตัด ขึ้นกับนโยบายลาของคลาสนั้น</td></tr>
+    <tr><td>กด <b>งดสอน</b></td><td>ไม่ตัดชั่วโมง บันทึกว่าโรงเรียนงดเอง</td></tr>
+    <tr><td>กดซ้ำ / สองคนกดพร้อมกัน</td><td>คนแรกชนะ ไม่บันทึกซ้ำ ตอบว่า "บันทึกแล้ว: X เมื่อ HH:MM"</td></tr>
+    <tr><td>ไม่ได้ตอบ</td><td>คาบนั้นค้างในแอปให้กดทีหลังได้ หมดอายุใน 7 วัน</td></tr>
+    <tr><td>กดผิด</td><td>ทำรายการกลับในแอป ประวัติเดิมยังอยู่ครบ</td></tr>
+  </table>
+  <h3>ในแอป (เปิดจากเมนูใน LINE)</h3>
+  <div class="grid g3">
+    <div class="card"><b>ยอดคงเหลือ</b><br><span class="stat-l">ชั่วโมงที่เหลือของทุกคลาส</span></div>
+    <div class="card"><b>ประวัติ</b><br><span class="stat-l">ทุกรายการพร้อมเวลาและผู้บันทึก</span></div>
+    <div class="card"><b>ลูก &amp; คลาส</b><br><span class="stat-l">บังคับตั้งวันเรียน · พักคลาส</span></div>
+    <div class="card"><b>เติมชั่วโมง / บันทึกมือ</b><br><span class="stat-l">ซื้อแพ็กใหม่ · แก้ย้อนด้วย reversal</span></div>
+    <div class="card"><b>เชิญคู่สมรส</b><br><span class="stat-l">invite code เข้าครัวเรือนเดียวกัน</span></div>
+    <div class="card"><b>ตั้งค่า</b><br><span class="stat-l">เตือนก่อนเรียนกี่นาที (ค่าเริ่มต้น 60)</span></div>
+  </div>
+</section>
+
+<section id="benefits">
+  <h2><span class="n">05</span>ประโยชน์</h2>
+  <div class="grid g2">
+    <div class="card"><b>ไม่ต้องจำ ไม่ต้องจด</b><br>ระบบเป็นฝ่ายทักมาเอง ผู้ปกครองแค่กดปุ่มเดียวในแอปที่เปิดอยู่ทุกวันอยู่แล้ว</div>
+    <div class="card"><b>มีหลักฐานเวลาคุยกับโรงเรียน</b><br>ทุกรายการมีวันเวลาและแก้ย้อนหลังไม่ได้ ใช้ยืนยันยอดได้</div>
+    <div class="card"><b>พ่อแม่เห็นตรงกัน</b><br>ครัวเรือนร่วม ใครกดก็ได้ อีกคนเห็นทันที ไม่บันทึกซ้ำ</div>
+    <div class="card"><b>รู้ว่าแพ็กใกล้หมด</b><br>เห็นยอดคงเหลือทุกคลาสในหน้าเดียว วางแผนซื้อแพ็กใหม่ได้ทัน</div>
+    <div class="card"><b>เข้าใช้ง่าย</b><br>login ด้วย LINE ครั้งเดียว ไม่มีรหัสผ่าน ไม่ต้องยืนยันอีเมล (แก้ต้นเหตุที่ทำให้ v1 ไม่มีคนใช้)</div>
+    <div class="card"><b>ต้นทุนต่ำ</b><br>รันบน VPS ที่มีอยู่แล้ว · LINE ใช้แพ็กฟรี (~87 จาก 300 ข้อความ/เดือน)</div>
+  </div>
+</section>
+
+<section id="proscons">
+  <h2><span class="n">06</span>ข้อดี (Pro) และข้อเสีย (Con)</h2>
+  <div class="grid g2">
+    <div class="card pro">
+      <h3>Pro</h3>
+      <ul>
+        <li><b>ข้อมูลเชื่อถือได้:</b> สมุดบัญชี append-only 3 ชั้น (trigger ห้ามแก้/ลบ · role แอปเขียนเพิ่มได้อย่างเดียว · hash chain)</li>
+        <li><b>ใช้งานจริงแล้ว:</b> ยอดหลังย้ายระบบตรงกับระบบเก่าทุกคลาส · เตือนจริงทำงานตั้งแต่ 31 ต.ค.</li>
+        <li><b>ทนต่อการกดซ้ำและ LINE ส่งซ้ำ:</b> dedupe ทั้งระดับ event และระดับคาบ</li>
+        <li><b>ผ่านการตรวจหลายชั้น:</b> ทุกก้อนโค้ดผ่านผู้รีวิว และผ่าน audit อิสระก่อน deploy</li>
+        <li><b>ops ครบ:</b> backup รายวันพร้อมนับแถว · สำรองนอกเครื่อง · แจ้งเตือนเมื่อระบบล่ม · คู่มือ rollback</li>
+        <li><b>เตรียม PDPA ไว้แล้ว:</b> กลไกลบทั้งครัวเรือน · backup ที่ลบตามได้ภายใน 90 วัน · ร่างประกาศผ่านการตรวจแล้ว</li>
+        <li><b>ย้ายง่าย:</b> ทุกไฟล์อยู่ในโฟลเดอร์เดียว deploy บนเครื่องของเราเอง ไม่ผูกกับผู้ให้บริการรายใด</li>
+      </ul>
+    </div>
+    <div class="card con">
+      <h3>Con</h3>
+      <ul>
+        <li><b>ยังไม่เคยพิสูจน์ตลาด:</b> ยังไม่ได้คุยกับผู้ปกครองหรือโรงเรียนอื่นสักราย</li>
+        <li><b>ผูกกับ LINE:</b> โควตาหมด = ระบบเงียบทั้งระบบ · เกิน 300 ข้อความต้องจ่าย 1,280 บาท+VAT/เดือน (ประมาณ 3–4 ครัวเรือนก็ชนเพดาน)</li>
+        <li><b>รับคนนอกได้ยาก:</b> ช่องทาง login ยังอยู่โหมด Developing ต้องเพิ่ม Tester และ allowlist ด้วยมือทีละครัวเรือน</li>
+        <li><b>ยังไม่ผ่านเกณฑ์ "เสร็จ" ของตัวเอง:</b> ต้องใช้ผ่าน LINE ต่อเนื่อง 2 สัปดาห์ · probe บางข้อยังไม่ได้ทดสอบ (Android · คนนอก allowlist · กดระหว่างแอป restart)</li>
+        <li><b>แยกข้อมูลหลายครัวเรือนด้วยเทสต์ ไม่ใช่ด้วย DB:</b> พอสำหรับ 5 ครัวเรือน ไม่พอสำหรับเปิดสาธารณะ</li>
+        <li><b>PDPA ยังไม่จบ:</b> ประกาศจริงรอชื่อแอป อีเมลกลาง และคำตอบทนาย (รวมเรื่อง backup ของผู้ให้บริการที่เก็บในต่างประเทศ)</li>
+        <li><b>ซับซ้อนกว่าขนาดผู้ใช้:</b> stack และขั้นตอน deploy หนักสำหรับครอบครัวเดียว ภาระดูแลตกที่คนเดียว</li>
+        <li><b>ยังไม่มีชื่อแบรนด์:</b> ชื่อที่ชอบชนกับแอปอื่น ใช้ชื่อชั่วคราว "สมุดชั่วโมงเรียน" ไปก่อน</li>
+      </ul>
+    </div>
+  </div>
+  <h3>เทียบ v1 กับ v2</h3>
+  <table>
+    <tr><th>ประเด็น</th><th>v1 (ส.ค.–ต.ค.)</th><th>v2 (ต.ค.–ปัจจุบัน)</th></tr>
+    <tr><td>เข้าใช้งาน</td><td>อีเมล + รหัสผ่าน + ยืนยันอีเมล</td><td>LINE ครั้งเดียว</td></tr>
+    <tr><td>เตือนวันเรียน</td><td><span class="tag t-bad">ไม่มี</span></td><td><span class="tag t-good">LINE ก่อนเรียน 60 นาที</span></td></tr>
+    <tr><td>บันทึก</td><td>ต้องเปิดแอปเอง</td><td>กดปุ่มในแชท</td></tr>
+    <tr><td>แก้ย้อนหลัง</td><td><span class="tag t-bad">ได้ (เขียนทับทั้งก้อน)</span></td><td><span class="tag t-good">ไม่ได้ (append-only)</span></td></tr>
+    <tr><td>ผู้ใช้จริง</td><td>เกือบไม่มี</td><td>ครอบครัวใช้ทุกสัปดาห์</td></tr>
+    <tr><td>Backup / แจ้งเตือนล่ม</td><td>ไม่มี</td><td>รายวัน + นอกเครื่อง + alert</td></tr>
+  </table>
+</section>
+
+<section id="tech">
+  <h2><span class="n">07</span>เทคนิคโดยสรุป</h2>
+  <div class="grid g2">
+    <div class="card">
+      <b>Stack</b>
+      <ul>
+        <li>Next.js 16 · TypeScript strict · Tailwind 4</li>
+        <li>PostgreSQL 16 · drizzle (migration 13 ชุด)</li>
+        <li>worker แยก: scheduler ทุก 60 วิ + outbox ส่งข้อความ</li>
+        <li>LINE Login (LIFF) + LINE Messaging API (webhook / postback)</li>
+        <li>Docker compose บน VPS ของเราเอง ผ่าน Cloudflare tunnel</li>
+      </ul>
+    </div>
+    <div class="card">
+      <b>ความปลอดภัยและความถูกต้อง</b>
+      <ul>
+        <li>ตรวจลายเซ็น webhook แบบ timing-safe · จำกัดขนาด body · rate limit</li>
+        <li>session cookie แบบ <code>__Host-</code> · CSRF · env ขาดแล้วไม่ยอมรัน (fail-closed)</li>
+        <li>เทสต์ mutant: ถอดกลไกกันแก้ทีละชั้นแล้วเทสต์ต้องแดง</li>
+        <li>เทสต์แยกข้อมูลครัวเรือนครอบคลุมทุก export</li>
+        <li>เก็บ secret นอก repo และนอก build context</li>
+      </ul>
+    </div>
+  </div>
+  <h3>วิธีทำงานของทีม</h3>
+  <div class="flow">
+    <span class="s">วางแผน / แตกงาน</span><span class="a">→</span>
+    <span class="s">เขียนโค้ด</span><span class="a">→</span>
+    <span class="s">รีวิว (four-eyes)</span><span class="a">→</span>
+    <span class="s">audit อิสระ</span><span class="a">→</span>
+    <span class="s">เจ้าของอนุมัติ deploy</span><span class="a">→</span>
+    <span class="s">ตรวจหลัง deploy ตามคู่มือ</span>
+  </div>
+</section>
+
+<section id="risks">
+  <h2><span class="n">08</span>ความเสี่ยงที่ต้องจับตา</h2>
+  <table>
+    <tr><th>ความเสี่ยง</th><th>ระดับ</th><th>ทางรับมือ</th></tr>
+    <tr><td>รับข้อมูลลูกของครอบครัวอื่นก่อน PDPA จบ</td><td><span class="tag t-bad">สูง</span></td><td>ห้ามรับคนนอกจนกลไกลบ + ประกาศจริงพร้อม</td></tr>
+    <tr><td>โควตา LINE หมด ระบบเงียบ</td><td><span class="tag t-bad">สูง</span></td><td>เตือนที่ 80% · รวมคลาสวันเดียวเป็นข้อความเดียว · หรือจ่ายแพ็ก Basic</td></tr>
+    <tr><td>เปิด login สาธารณะแล้วย้อนกลับไม่ได้</td><td><span class="tag t-warn">กลาง</span></td><td>คงโหมด Developing + Tester ในช่วงทดลอง</td></tr>
+    <tr><td>เตือนตกหล่นครั้งเดียว ความไว้ใจหาย</td><td><span class="tag t-warn">กลาง</span></td><td>health alert ภายนอก · ดู outbox ที่ส่งไม่ผ่าน</td></tr>
+    <tr><td>สร้างของที่ไม่มีใครต้องการ</td><td><span class="tag t-warn">กลาง</span></td><td>คุยผู้ปกครอง 8–10 คนก่อนเขียนโค้ดเพิ่ม</td></tr>
+  </table>
+</section>
+
+<section id="next">
+  <h2><span class="n">09</span>ขั้นต่อไป</h2>
+  <div class="grid g3">
+    <div class="card"><span class="tag t-acc">เฟส 0</span><h3>ใช้เองจนผ่านเกณฑ์</h3><ul><li>4 สุดสัปดาห์ติดไม่มีเตือนหลุด/ซ้ำ</li><li>≥80% ของคาบตอบผ่าน LINE</li><li>retire v1 (5 พ.ย.)</li><li>ทดสอบ probe ที่เหลือ</li><li>ปิด PDPA</li></ul></div>
+    <div class="card"><span class="tag t-acc">เฟส 0.5</span><h3>ถามก่อนเชิญ</h3><ul><li>คุยผู้ปกครอง 8–10 คน</li><li>คุยโรงเรียน 3–5 แห่ง</li><li>ไปต่อเมื่อ ≥3 ใน 10 เล่าความเจ็บเอง</li></ul></div>
+    <div class="card"><span class="tag t-acc">เฟส 1</span><h3>กลุ่มเชิญปิด</h3><ul><li>3–5 ครัวเรือน 8 สัปดาห์ ฟีเจอร์เต็ม</li><li>วัดการใช้ซ้ำ · ภาระ support</li><li>ถามราคาที่ยอมจ่าย</li></ul></div>
+  </div>
+  <div class="callout acc" style="margin-top:16px">
+    <b>สรุปสั้น:</b> ด้านเทคนิคแข็งแรงและใช้งานจริงแล้วในครอบครัว ส่วนที่ยังขาดคือหลักฐานว่ามีคนอื่นต้องการ และงาน PDPA ก่อนรับข้อมูลคนนอก
+  </div>
+</section>
+
+<footer>
+  สรุปจากเอกสารโปรเจกต์ (PLAN-v2-line · LAUNCH-PLAN · PDPA-PLAN · handoff · git history) ณ 2 พ.ย. 2026 · หน้านี้ตัดข้อมูลส่วนตัวและข้อมูลโครงสร้างระบบที่เป็นความลับออกแล้ว
+</footer>
+
+</div>
+</body>
+</html>
