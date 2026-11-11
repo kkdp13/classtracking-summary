@@ -2,283 +2,1337 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>สรุปโปรเจกต์ classtracking — สมุดชั่วโมงเรียน</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4352C4">
+<title>สรุปโปรเจกต์ ตัดคอร์ส (classtracking v3) — ฉบับ 2026-11-11</title>
 <style>
   :root{
-    --bg:#f7f5f0; --paper:#fffdf8; --ink:#1f2328; --muted:#5d636b; --line:#e4dfd4;
-    --accent:#0f6b5c; --accent-soft:#e3f1ed; --warn:#9a5b00; --warn-soft:#fbf0dc;
-    --bad:#a2332b; --bad-soft:#f8e4e1; --good:#1d6f3b; --good-soft:#e2f2e6;
+    /* role-named tokens · ตรงกับ tokens.json ของแอป v3 (Calm Indigo) */
+    --primary:#4352C4; --primary-hover:#3542A6; --primary-soft:#EEF0FB;
+    --ink:#1E2433; --muted:#5B6474; --bg:#F7F8FA; --surface:#FFFFFF;
+    --border:#DDE1E8; --track:#E9ECF1;
+    --success:#1F7A4D; --success-soft:#E8F5EE;
+    --warning:#8A5300; --warning-soft:#FFF4DD;
+    --danger:#B42335; --danger-soft:#FDECEE;
+    --r-input:12px; --r-button:14px; --r-card:20px;
+    --font:"Noto Sans Thai","Sukhumvit Set","Thonburi","Leelawadee UI","Tahoma",system-ui,sans-serif;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Thai",system-ui,sans-serif;line-height:1.7;font-size:16px}
-  .wrap{max-width:980px;margin:0 auto;padding:40px 20px 80px}
-  header.hero{padding:28px 0 20px;border-bottom:2px solid var(--ink);margin-bottom:28px}
-  .kicker{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600}
-  h1{font-size:clamp(28px,5vw,42px);line-height:1.2;margin:6px 0 10px}
-  .lede{font-size:18px;color:var(--muted);max-width:720px;margin:0}
-  .meta{margin-top:14px;font-size:14px;color:var(--muted)}
-  nav.toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 32px}
-  nav.toc a{font-size:14px;text-decoration:none;color:var(--ink);border:1px solid var(--line);background:var(--paper);padding:6px 12px;border-radius:999px}
-  nav.toc a:hover{border-color:var(--accent);color:var(--accent)}
-  section{margin:0 0 44px}
-  h2{font-size:24px;margin:0 0 6px;display:flex;gap:10px;align-items:baseline}
-  h2 .n{font-size:14px;color:var(--accent);font-weight:700}
-  h3{font-size:17px;margin:20px 0 8px}
+  html{scroll-behavior:smooth;scroll-padding-top:64px}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.7;-webkit-text-size-adjust:100%}
+  a{color:var(--primary)}
+  :focus-visible{outline:3px solid var(--primary);outline-offset:3px}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 16px 80px}
+
+  /* hero */
+  header.hero{background:var(--surface);border-bottom:1px solid var(--border)}
+  header.hero .in{max-width:1000px;margin:0 auto;padding:28px 16px 22px}
+  .kicker{font-size:14px;color:var(--primary);font-weight:700}
+  h1{font-size:clamp(26px,6vw,40px);line-height:1.3;margin:6px 0 10px;text-wrap:balance}
+  .lede{font-size:17px;color:var(--muted);max-width:760px;margin:0}
+  .meta{margin-top:14px;font-size:14px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+
+  /* sticky toc */
+  nav.toc{position:sticky;top:0;z-index:20;background:rgba(247,248,250,.96);backdrop-filter:saturate(1.2) blur(6px);border-bottom:1px solid var(--border)}
+  nav.toc .in{max-width:1000px;margin:0 auto;display:flex;gap:6px;overflow-x:auto;padding:10px 16px;scrollbar-width:thin}
+  nav.toc a{flex:0 0 auto;font-size:14px;text-decoration:none;color:var(--ink);border:1px solid var(--border);background:var(--surface);padding:6px 12px;border-radius:999px;white-space:nowrap;min-height:36px;display:inline-flex;align-items:center}
+  nav.toc a:hover{border-color:var(--primary);color:var(--primary)}
+  nav.toc a b{color:var(--primary);margin-right:4px}
+
+  section{padding-top:36px}
+  h2{font-size:clamp(22px,4.6vw,28px);line-height:1.35;margin:0 0 6px;display:flex;gap:10px;align-items:baseline;text-wrap:balance}
+  h2 .n{font-size:15px;color:var(--surface);background:var(--primary);border-radius:8px;padding:0 8px;font-weight:700;flex:0 0 auto}
+  h3{font-size:19px;margin:26px 0 8px;line-height:1.45}
+  h4{font-size:16px;margin:16px 0 6px}
   p.sub{color:var(--muted);margin:0 0 16px}
-  .card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
-  .grid{display:grid;gap:14px}
+  p{margin:8px 0}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:16px 18px}
+  .grid{display:grid;gap:12px}
   .g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
   .g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
-  .stat{font-size:30px;font-weight:700;line-height:1.1}
-  .stat-l{font-size:13px;color:var(--muted)}
-  ul{margin:6px 0;padding-left:20px} li{margin:4px 0}
-  table{width:100%;border-collapse:collapse;background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:15px}
-  th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
-  th{background:#efebe2;font-weight:600;font-size:14px}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+  .stat{font-size:28px;font-weight:800;line-height:1.2;font-variant-numeric:tabular-nums}
+  .stat-l{font-size:14px;color:var(--muted)}
+  ul,ol{margin:6px 0;padding-left:22px} li{margin:4px 0}
+  .tbl{overflow-x:auto;border:1px solid var(--border);border-radius:14px;background:var(--surface);margin:8px 0}
+  table{width:100%;border-collapse:collapse;font-size:15px;min-width:520px}
+  th,td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--border)}
+  th{background:var(--primary-soft);font-weight:700;font-size:14px}
   tr:last-child td{border-bottom:none}
-  .tag{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
-  .t-good{background:var(--good-soft);color:var(--good)} .t-warn{background:var(--warn-soft);color:var(--warn)}
-  .t-bad{background:var(--bad-soft);color:var(--bad)} .t-acc{background:var(--accent-soft);color:var(--accent)}
-  .pro{border-top:4px solid var(--good)} .con{border-top:4px solid var(--bad)}
-  .pro h3,.con h3{margin-top:0}
-  .callout{border-left:4px solid var(--warn);background:var(--warn-soft);padding:14px 18px;border-radius:0 10px 10px 0}
-  .callout.acc{border-color:var(--accent);background:var(--accent-soft)}
-  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px}
-  .flow span.s{background:var(--paper);border:1px solid var(--line);padding:8px 12px;border-radius:8px}
-  .flow span.a{color:var(--muted)}
-  .timeline{border-left:2px solid var(--line);padding-left:18px;margin-left:6px}
-  .tl{position:relative;margin:0 0 16px}
-  .tl::before{content:"";position:absolute;left:-25px;top:8px;width:12px;height:12px;border-radius:50%;background:var(--accent)}
-  .tl.old::before{background:#b9b2a3}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  code{font-size:13px;background:var(--track);padding:1px 5px;border-radius:5px;word-break:break-word}
+  q{quotes:"“" "”"}
+  .q{background:var(--primary-soft);border-radius:6px;padding:0 5px;font-weight:600}
+
+  .tag{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap;line-height:1.6;vertical-align:middle}
+  .t-live{background:var(--success-soft);color:var(--success)}
+  .t-merged{background:var(--primary-soft);color:var(--primary)}
+  .t-review{background:var(--warning-soft);color:var(--warning)}
+  .t-plan{background:var(--track);color:var(--muted)}
+  .t-bad{background:var(--danger-soft);color:var(--danger)}
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+
+  .callout{display:flex;gap:10px;border-radius:16px;padding:12px 14px;margin:12px 0;background:var(--primary-soft)}
+  .callout.warn{background:var(--warning-soft)} .callout.bad{background:var(--danger-soft)} .callout.ok{background:var(--success-soft)}
+  .callout svg{flex:0 0 auto;margin-top:4px}
+  .callout.warn svg{color:var(--warning)} .callout.bad svg{color:var(--danger)} .callout.ok svg{color:var(--success)}
+  .callout > div{min-width:0}
+
+  details{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin:10px 0;overflow:hidden}
+  details > summary{cursor:pointer;padding:12px 16px;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:10px;min-height:48px;align-items:center}
+  details > summary::-webkit-details-marker{display:none}
+  details > summary::after{content:"+";font-size:22px;color:var(--primary);line-height:1}
+  details[open] > summary::after{content:"−"}
+  details > .body{padding:0 16px 14px;border-top:1px solid var(--border)}
+
+  .steps{counter-reset:s;list-style:none;padding:0;margin:8px 0}
+  .steps li{counter-increment:s;position:relative;padding:4px 0 4px 40px;margin:6px 0}
+  .steps li::before{content:counter(s);position:absolute;left:0;top:4px;width:28px;height:28px;border-radius:50%;background:var(--primary);color:#fff;font-weight:700;font-size:14px;display:grid;place-items:center}
+
+  .timeline{border-left:2px solid var(--border);padding-left:20px;margin:8px 0 8px 8px}
+  .tl{position:relative;margin:0 0 18px}
+  .tl::before{content:"";position:absolute;left:-28px;top:7px;width:14px;height:14px;border-radius:50%;background:var(--primary);border:3px solid var(--bg)}
+  .tl.old::before{background:#A9B0BD}
+  .tl.now::before{background:var(--warning)}
   .tl b{display:block}
-  .tl small{color:var(--muted)}
-  code{font-size:13px;background:#efebe2;padding:1px 5px;border-radius:4px}
-  footer{margin-top:50px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
-  @media (max-width:600px){ th,td{padding:8px} table{font-size:14px} }
+  .tl .d{font-size:14px;color:var(--primary);font-weight:700}
+  .tl small{color:var(--muted);font-size:14px;display:block}
+
+  .flowrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:14px;margin:8px 0}
+  .flowrow .s{background:var(--surface);border:1px solid var(--border);padding:6px 10px;border-radius:10px}
+  .flowrow .s.p{border-color:var(--primary);color:var(--primary);font-weight:700}
+  .flowrow .a{color:var(--muted)}
+
+  .swatch{display:flex;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:8px 10px}
+  .swatch i{width:40px;height:40px;border-radius:10px;flex:0 0 auto;border:1px solid rgba(0,0,0,.08)}
+  .swatch b{display:block;font-size:14px} .swatch span{font-size:13px;color:var(--muted)}
+
+  /* ---------- phone mockups ---------- */
+  .mocks{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;margin:14px 0}
+  .mockcap{font-size:13px;color:var(--muted);text-align:center;margin-top:6px;max-width:280px}
+  .phone{width:272px;border:7px solid var(--ink);border-radius:34px;background:var(--ink);overflow:hidden;box-shadow:0 8px 26px rgba(30,36,51,.16)}
+  .phone .bar{height:22px;color:#fff;font-size:11px;display:flex;justify-content:space-between;padding:3px 18px 0}
+  .scr{background:var(--bg);min-height:440px;font-size:13px;line-height:1.55;position:relative;display:flex;flex-direction:column}
+  .scr.chat{background:#DCE3EE}
+  .chathead{background:#fff;padding:7px 12px;font-weight:700;font-size:13px;border-bottom:1px solid var(--border);display:flex;gap:6px;align-items:center}
+  .chathead .av{width:22px;height:22px;border-radius:50%;background:var(--primary);color:#fff;font-size:11px;display:grid;place-items:center}
+  .msgs{padding:10px 8px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .me{align-self:flex-end;background:#9BE07A;border-radius:14px 14px 4px 14px;padding:5px 10px;max-width:80%;font-size:12px}
+  .bot{align-self:flex-start;background:#fff;border-radius:14px 14px 14px 4px;padding:6px 10px;max-width:86%;font-size:12px}
+  .flex{background:#fff;border-radius:14px;overflow:hidden;width:200px;flex:0 0 auto;font-size:12px;align-self:flex-start}
+  .fx-h{background:var(--primary-soft);padding:7px 10px;font-weight:700;color:var(--ink)}
+  .fx-b{padding:8px 10px}
+  .fx-b .big{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.3}
+  .fx-b .mut{color:var(--muted);font-size:11px}
+  .fx-btn{display:block;text-align:center;border-radius:10px;padding:6px 4px;margin-top:6px;font-weight:700;font-size:12px;border:1.5px solid var(--primary);color:var(--primary);background:#fff}
+  .fx-btn.p{background:var(--primary);color:#fff}
+  .fx-btn.g{border-color:var(--border);color:var(--ink)}
+  .carousel{display:flex;gap:6px;overflow:hidden;align-self:stretch}
+  .carousel .flex{width:150px}
+  .qr{display:flex;gap:5px;flex-wrap:wrap;padding:4px 6px 0}
+  .qr span{background:#fff;border:1px solid var(--primary);color:var(--primary);border-radius:999px;padding:2px 9px;font-size:11px;font-weight:700}
+  .rm{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border);border-top:1px solid var(--border)}
+  .rm div{background:#fff;height:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;gap:2px;text-align:center}
+  .rm div.p{background:var(--primary);color:#fff}
+  .rm div svg{width:18px;height:18px}
+  .chatbar{background:#fff;text-align:center;font-size:11px;padding:4px;border-top:1px solid var(--border);color:var(--muted)}
+  .appbar{background:#fff;border-bottom:1px solid var(--border);padding:9px 12px;font-weight:700;font-size:15px;display:flex;gap:8px;align-items:center}
+  .liffbody{padding:10px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .bnav{display:grid;grid-template-columns:repeat(3,1fr);background:#fff;border-top:1px solid var(--border);box-shadow:0 -4px 20px rgb(30 36 51 / .08)}
+  .bnav div{display:flex;flex-direction:column;align-items:center;font-size:11px;padding:5px 0 7px;color:var(--muted)}
+  .bnav div.on{color:var(--primary);font-weight:700}
+  .bnav svg{width:19px;height:19px}
+  .tabs{display:flex;gap:6px}
+  .tabs span{flex:1;text-align:center;border-radius:10px;padding:4px;font-weight:700;font-size:12px;background:#fff;border:1px solid var(--border)}
+  .tabs span.on{background:var(--primary-soft);border-color:var(--primary);color:var(--primary)}
+  .cc{background:#fff;border:1px solid var(--border);border-radius:14px;padding:8px 10px}
+  .cc .row{display:flex;justify-content:space-between;align-items:center;gap:6px}
+  .cc .nm{font-weight:700;font-size:13px}
+  .cc .bal{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.3}
+  .cc .who{font-size:11px;color:var(--muted)}
+  .usage{height:6px;background:var(--track);border-radius:99px;overflow:hidden;margin:4px 0 2px}
+  .usage i{display:block;height:100%;background:var(--primary)}
+  .bdg{display:inline-flex;align-items:center;gap:3px;border-radius:999px;padding:1px 7px;font-size:10.5px;font-weight:700;white-space:nowrap}
+  .bdg svg{width:11px;height:11px}
+  .b-ok{background:var(--success-soft);color:var(--success)}
+  .b-soon{background:var(--warning-soft);color:var(--warning)}
+  .b-exp{background:var(--danger-soft);color:var(--danger)}
+  .b-none{background:var(--track);color:var(--muted)}
+  .wbar{background:var(--warning-soft);color:var(--warning);border-radius:12px;padding:6px 9px;font-size:12px;display:flex;gap:6px}
+  .wbar b{color:var(--ink)}
+  .lbl{font-weight:700;font-size:12px;margin-top:2px}
+  .inp{background:#fff;border:1px solid var(--muted);border-radius:10px;padding:6px 9px;font-size:12px;color:var(--muted)}
+  .hint{font-size:10.5px;color:var(--muted);line-height:1.45}
+  .btn{display:block;text-align:center;border-radius:12px;padding:9px;font-weight:700;font-size:13px;background:var(--primary);color:#fff}
+  .btn.s{background:#fff;color:var(--primary);border:1.5px solid var(--primary)}
+  .btn.d{background:var(--track);color:var(--muted)}
+  .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+  .seg span{border:1px solid var(--border);background:#fff;border-radius:10px;padding:5px 3px;text-align:center;font-size:11px;font-weight:700}
+  .seg span.on{border-color:var(--primary);background:var(--primary-soft);color:var(--primary)}
+  .ba{display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid var(--border);border-radius:12px;padding:8px 10px}
+  .ba .big{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
+  .sw{width:34px;height:20px;border-radius:99px;background:var(--primary);position:relative;flex:0 0 auto}
+  .sw::after{content:"";position:absolute;right:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#fff}
+  .sw.off{background:var(--track)} .sw.off::after{left:3px;right:auto}
+  .srow{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;background:#fff;border:1px solid var(--border);border-radius:12px;padding:8px 10px}
+  .srow.dis{opacity:.7}
+  .hrow{background:#fff;border:1px solid var(--border);border-radius:12px;padding:7px 10px;font-size:12px}
+  .hrow .t{display:flex;justify-content:space-between;gap:6px}
+  .strike{text-decoration:line-through;color:var(--muted)}
+  .tagline{font-size:10.5px;color:var(--muted)}
+  footer{margin-top:50px;padding-top:16px;border-top:1px solid var(--border);font-size:14px;color:var(--muted)}
+  .cols2{columns:2 260px;column-gap:24px}
+  .cols2 li{break-inside:avoid}
+  @media (max-width:600px){ th,td{padding:8px} table{font-size:14px} .card{padding:14px} }
 </style>
 </head>
 <body>
-<div class="wrap">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></symbol>
+    <symbol id="i-hour" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></symbol>
+    <symbol id="i-cut" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.1 15.9M14.5 14.5L20 20M8.1 8.1L12 12"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2z"/><path d="M4 19V5"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></symbol>
+  </defs>
+</svg>
 
 <header class="hero">
-  <div class="kicker">Project summary · classtracking</div>
-  <h1>สมุดชั่วโมงเรียน<br>ระบบติดตามชั่วโมงเรียนพิเศษของลูก</h1>
-  <p class="lede">ถึงวันเรียน LINE ทักมาพร้อมปุ่ม <b>เข้าเรียน / ลา / งดสอน</b> กดในแชทครั้งเดียว ระบบตัดชั่วโมงให้ทันทีและบันทึกลงสมุดบัญชีที่แก้ย้อนหลังไม่ได้ ผู้ปกครองไม่ต้องจดเองและไม่ต้องจำว่าเหลือกี่ชั่วโมง</p>
-  <div class="meta">ช่วงเวลาโปรเจกต์ 23 ส.ค. – 2 พ.ย. 2026 · สถานะ: <span class="tag t-good">ใช้งานจริงในครอบครัว</span> <span class="tag t-warn">ยังไม่เปิดให้คนนอก</span></div>
+  <div class="in">
+    <div class="kicker">สรุปโปรเจกต์ · classtracking v3 · ฉบับอัปเดต</div>
+    <h1>ตัดคอร์ส — LINE Course Tracker<br>บันทึกคอร์สที่ซื้อไว้ล่วงหน้า แล้วตัดยอดเองในแชท LINE</h1>
+    <p class="lede">จากสมุดชั่วโมงเรียนเต้นของลูก (v1, v2) ตอนนี้กลายเป็นเครื่องมือสำหรับ<b>คอร์สล่วงหน้าทุกแบบ</b> เช่น เรียนพิเศษ นวด ทำผม ฟิตเนส ล้างรถ นับได้ 3 แบบ คือ ครั้ง ชั่วโมง และมูลค่าบริการ ผู้ใช้เป็นคนกดยืนยันการตัดยอดทุกครั้ง ระบบไม่ตัดให้เอง และประวัติแก้ย้อนหลังไม่ได้</p>
+    <div class="meta">
+      <span>สถานะ ณ <b>2026-11-11</b> (สรุปตามข้อมูลในเรโปและผลรีวิว ณ เวลานั้น · แทนฉบับ 2026-11-02)</span>
+    </div>
+    <div class="legend" aria-label="ความหมายป้ายสถานะ">
+      <span class="tag t-live">LIVE · ใช้งานจริง</span>
+      <span class="tag t-merged">รวมเข้า trunk แล้ว (ยังไม่ขึ้นระบบจริง)</span>
+      <span class="tag t-review">กำลังทำ / รอรีวิว</span>
+      <span class="tag t-plan">วางแผน</span>
+    </div>
+  </div>
 </header>
 
-<nav class="toc">
-  <a href="#overview">ภาพรวม</a><a href="#journey">เส้นทางโปรเจกต์</a><a href="#scope">Scope</a>
-  <a href="#usage">การใช้งาน</a><a href="#benefits">ประโยชน์</a><a href="#proscons">ข้อดี–ข้อเสีย</a>
-  <a href="#tech">เทคนิค</a><a href="#risks">ความเสี่ยง</a><a href="#next">ขั้นต่อไป</a>
+<nav class="toc" aria-label="สารบัญ">
+  <div class="in">
+    <a href="#overview"><b>1</b>ภาพรวม</a>
+    <a href="#timeline"><b>2</b>ไทม์ไลน์</a>
+    <a href="#model"><b>3</b>โมเดลคอร์ส</a>
+    <a href="#ux"><b>4</b>UX ทุก flow</a>
+    <a href="#ui"><b>5</b>UI / ดีไซน์</a>
+    <a href="#plans"><b>6</b>แผนและราคา</a>
+    <a href="#legal"><b>7</b>กฎหมาย</a>
+    <a href="#arch"><b>8</b>สถาปัตยกรรม</a>
+    <a href="#left"><b>9</b>งานที่เหลือ</a>
+    <a href="#risks"><b>10</b>ความเสี่ยง</a>
+  </div>
 </nav>
 
+<div class="wrap">
+
+<!-- ===================================================== 1 -->
 <section id="overview">
-  <h2><span class="n">01</span>ภาพรวม</h2>
-  <p class="sub">ตัวเลขสำคัญ ณ วันที่ 2 พ.ย. 2026</p>
-  <div class="grid g3">
-    <div class="card"><div class="stat">2 รุ่น</div><div class="stat-l">v1 เว็บแอป (ส.ค.) → v2 LINE OA + LIFF (ต.ค.)</div></div>
-    <div class="card"><div class="stat">145</div><div class="stat-l">commit ในโฟลเดอร์โปรเจกต์</div></div>
-    <div class="card"><div class="stat">13</div><div class="stat-l">migration ฐานข้อมูล (0000–0012)</div></div>
-    <div class="card"><div class="stat">55</div><div class="stat-l">ไฟล์เทสต์ (unit · integration · e2e)</div></div>
-    <div class="card"><div class="stat">~87</div><div class="stat-l">ข้อความ LINE ต่อเดือน (โควตาฟรี 300)</div></div>
-    <div class="card"><div class="stat">29 ต.ค.</div><div class="stat-l">วันย้ายระบบขึ้น v2 (cutover) · เตือนจริงครั้งแรก 31 ต.ค.</div></div>
+  <h2><span class="n">1</span>ภาพรวม 1 หน้า</h2>
+  <p class="sub">อ่านส่วนนี้ส่วนเดียวก็เห็นภาพทั้งโปรเจกต์</p>
+
+  <div class="callout">
+    <svg width="20" height="20" aria-hidden="true"><use href="#i-info"/></svg>
+    <div><b>อ่านใน 30 วินาที:</b> ระบบที่ใช้งานจริงตอนนี้ยังเป็น <b>v2</b> (release 0025b ที่ class.foxxy.cloud ใช้ภายในครอบครัว 1 ครัวเรือน และยังไม่เปิดรับชำระเงิน) ส่วน <b>v3 "ตัดคอร์ส"</b> เป็นการเปลี่ยนทิศเมื่อ 10 พ.ย. ตอนนี้สร้างอยู่ใน branch หลักของ v3 วันนี้รวมงานเข้าไป 7 ชุด มีอีก 2 ชุดที่รีวิวผ่านแล้วรอรวม และยังเหลืองานก่อนย้ายระบบ (cutover) อีกราว 8 ชุด ทุกอย่างของ v3 <b>ยังไม่มีผู้ใช้จริง</b></div>
   </div>
-  <h3>ปัญหาที่ระบบนี้แก้</h3>
-  <p>ลูกเรียนพิเศษหลายคลาส (เต้น ภาษา ดนตรี) แต่ละที่ขายเป็นแพ็กชั่วโมง ผู้ปกครองต้องจดเองว่ามาเรียนวันไหน ลาวันไหน โรงเรียนงดสอนวันไหน และเหลือกี่ชั่วโมง พอมีหลายคลาสและผู้ปกครองสองคนก็จดหลุดได้ง่าย และเถียงกับโรงเรียนได้ยากเพราะไม่มีหลักฐาน</p>
+
+  <div class="grid g4">
+    <div class="card"><div class="stat">3</div><div class="stat-l">รุ่น: v1 เว็บแอป (ส.ค.) → v2 LINE + LIFF (29 ต.ค.) → v3 ตัดคอร์ส (10 พ.ย. →)</div></div>
+    <div class="card"><div class="stat">33</div><div class="stat-l">migration ใน trunk ของ v3 (0000–0032) · 0033 รอรวม · วางเลขไว้ถึง 0039</div></div>
+    <div class="card"><div class="stat">~1,290</div><div class="stat-l">commit ที่เกี่ยวกับ classtracking ตั้งแต่ 29 ต.ค. (เฉพาะ 11 พ.ย. 151 commit)</div></div>
+    <div class="card"><div class="stat">179</div><div class="stat-l">ไฟล์เทสต์ใน trunk (unit 104 · integration 57 · e2e 18)</div></div>
+    <div class="card"><div class="stat">~1,870</div><div class="stat-l">unit test ที่ผ่านในรอบรีวิวล่าสุด · integration ~1,400 · e2e 70</div></div>
+    <div class="card"><div class="stat">0</div><div class="stat-l">โรงเรียน/ร้าน/ลูกค้าจริงที่ได้คุยเพื่อยืนยันว่าตลาดต้องการ (ข้อค้างสำคัญที่สุด · ดูหัวข้อ 10)</div></div>
+  </div>
+
+  <h3>มันคืออะไรตอนนี้</h3>
+  <p>LINE Official Account ชื่อ <b>ตัดคอร์ส</b> + แอปเล็กที่เปิดใน LINE (LIFF) สำหรับคนที่ซื้อคอร์สหรือแพ็กเกจไว้ล่วงหน้าหลายที่ แล้วจำไม่ได้ว่าแต่ละที่เหลือกี่ครั้ง กี่ชั่วโมง หรือมูลค่าเท่าไร และหมดอายุเมื่อไร ผู้ใช้กด <span class="q">ตัดคอร์ส</span> จากเมนูในแชท เลือกคอร์ส เลือกจำนวน ดูยอดก่อนและหลังตัด แล้วกดยืนยัน ยอดเปลี่ยนเฉพาะตอนผู้ใช้กดเองเท่านั้น</p>
+  <p>v3 มาจากสเปกส่งต่องาน "LINE Course Tracker" (10 พ.ย.) ที่ Mr.Foxx กำหนดว่า <b>สเปกชนะทุกครั้งที่ขัดกับคำตัดสินเดิม</b> จึงเปลี่ยนหลายเรื่องจาก v2: จาก "ครัวเรือนใช้ร่วมกัน 2 คน" เป็น <b>1 บัญชี = 1 LINE ไม่แชร์</b> · จาก "ชั่วโมงเรียนของลูก" เป็น <b>คอร์สทุกชนิด 3 แบบ</b> · จาก LINE + Telegram เป็น <b>LINE ช่องทางเดียว</b> · จากทดลองใช้ 2 เดือนแล้วจ่าย เป็น <b>Free ตลอด + Pro/Max</b></p>
+
+  <div class="grid g2">
+    <div class="card">
+      <h4 style="margin-top:0">ใช้กับใคร</h4>
+      <ul>
+        <li>พ่อแม่ที่ซื้อคอร์สเรียนพิเศษให้ลูก (ใส่ <span class="q">ป้ายชื่อ</span> เช่น "ลูกคนที่ 1" ในบัญชีเดียว ป้ายชื่อเป็นแค่ข้อความ คนนั้นไม่ได้เข้าใช้บัญชี)</li>
+        <li>คนที่ซื้อคอร์สของตัวเอง เช่น นวดหน้า 10 ครั้ง · เปียโน 20 ชั่วโมง · เครดิตทำผม 70,000 บาท</li>
+        <li>แพ็กเกจบริการ เช่น ล้างรถ</li>
+        <li>ใช้บนมือถือ มือเดียว มักใช้ตอนเพิ่งใช้บริการเสร็จหรือยืนอยู่หน้าร้าน ไม่ใช่คนสายเทคนิค</li>
+      </ul>
+      <h4>ไม่ใช่</h4>
+      <ul>
+        <li>ไม่ใช่ระบบของร้าน/โรงเรียน/คลินิก (Business SaaS อยู่นอกขอบเขต) · ระบบครู/เทรนเนอร์แยกไปเป็นอีกโปรเจกต์แล้ว</li>
+        <li>ไม่รับ ไม่ถือ ไม่โอนเงินหรือเครดิตแทนร้าน ยอดในแอปเป็น <b>บันทึกส่วนตัวที่ผู้ใช้กรอกเอง</b></li>
+        <li>ไม่ใช้ AI คำนวณยอด ไม่ใช้ NAS ไม่แชร์คอร์สหรือส่งข้อความหาคนอื่น</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">หลักการแกน 5 ข้อ</h4>
+      <ol>
+        <li><b>Ledger แบบเพิ่มอย่างเดียว (append-only)</b> ทุกการตัดยอดเป็นรายการถาวร แก้ผิดด้วยรายการหักล้าง (<span class="q">แก้รายการ</span>) ประวัติเดิมยังอยู่ ขึ้นป้าย "แก้แล้ว"</li>
+        <li><b>ยืนยันด้วยตัวเองทุกครั้ง</b> ต้องเห็นยอดก่อนและหลังแล้วกดยืนยัน กันกดซ้ำด้วย idempotency key</li>
+        <li><b>ไม่มีการตัดอัตโนมัติ</b> ถึงเวลาเรียนแล้วไม่กดตอบก็ไม่ตัด กด "ลา" หรือ "งดสอน" ก็ไม่ตัด</li>
+        <li><b>ตอบในแชทก่อน (reply-first)</b> การกดในเมนูใช้ postback แล้วตอบกลับด้วย reply ส่วน push (ข้อความที่ระบบส่งเอง) ใช้เฉพาะแผนที่มีโควตา</li>
+        <li><b>ยอดจริงมาจากฐานข้อมูลเท่านั้น</b> หน้าจอและข้อความเก่าในแชทไม่ใช่แหล่งความจริง ทุกการกดโหลดสถานะล่าสุดใหม่ เงินเก็บเป็นสตางค์ เวลาเก็บเป็นนาที</li>
+      </ol>
+    </div>
+  </div>
+
+  <h3>ของจริงตอนนี้ เทียบกับสิ่งที่กำลังสร้าง</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>เรื่อง</th><th>ระบบที่ใช้งานจริง (v2)</th><th>v3 ที่กำลังสร้าง</th></tr></thead>
+    <tbody>
+      <tr><td>สถานะ</td><td><span class="tag t-live">LIVE</span> release 0025b ตั้งแต่ 8 พ.ย. · ใช้ภายในครอบครัว · คนนอกรายชื่อที่อนุญาตเห็นแค่หน้า "เร็วๆ นี้"</td><td><span class="tag t-merged">trunk</span> อยู่ใน branch หลักของ v3 · ยังไม่ deploy · ระบบทดสอบ (staging) โครงพร้อมแล้ว รอ image v3</td></tr>
+      <tr><td>ผู้ใช้</td><td>ครัวเรือน (พ่อแม่ 2 คนดูข้อมูลชุดเดียวกัน)</td><td>บัญชีเดี่ยว 1 LINE ไม่แชร์ · ครัวเรือนเดิมแบบ 2 คนจะถูกแปลงตอนย้ายระบบ และสิทธิ์เขียนเหลือเฉพาะเจ้าของบัญชี</td></tr>
+      <tr><td>สิ่งที่นับ</td><td>ชั่วโมงเรียนของลูกต่อคลาส</td><td>คอร์ส 3 แบบ: ครั้ง · ชั่วโมง · มูลค่าบริการ · มีวันหมดอายุ · เก็บเข้าคลังได้</td></tr>
+      <tr><td>ช่องทางเตือน</td><td>LINE + Telegram</td><td>LINE เท่านั้น (เลิกใช้ Telegram ฝั่งผู้ใช้แล้วใน migration 0032)</td></tr>
+      <tr><td>ราคา</td><td>ทดลองใช้ 2 เดือน แล้วจ่ายรายเดือน/รายปี (ยังไม่เปิดรับจริง)</td><td>Free ตลอด (5 คอร์ส) · Pro / Max แบบ 6 หรือ 12 เดือน · ราคายังไม่ตัดสิน</td></tr>
+      <tr><td>รับชำระเงิน</td><td>ยังไม่เปิด (ยังไม่เคยมีรายการชำระ)</td><td>PromptPay + สลิป อนุมัติด้วยคนก่อน · บัตรต่ออายุอัตโนมัติทีหลัง</td></tr>
+    </tbody>
+  </table></div>
 </section>
 
-<section id="journey">
-  <h2><span class="n">02</span>เส้นทางโปรเจกต์</h2>
-  <p class="sub">ทำแล้วเรียนรู้ เปลี่ยนทิศเมื่อข้อมูลจริงบอกว่าทางเดิมใช้ไม่ได้</p>
+<!-- ===================================================== 2 -->
+<section id="timeline">
+  <h2><span class="n">2</span>ไทม์ไลน์และประวัติเวอร์ชัน</h2>
+  <p class="sub">ทำแล้วเรียนรู้ แล้วเปลี่ยนทิศเมื่อข้อมูลบอกว่าทางเดิมไม่ใช่</p>
+
   <div class="timeline">
-    <div class="tl old"><b>23 ส.ค. — เริ่มโปรเจกต์ (v1)</b><small>ต้นแบบเก็บข้อมูลในเครื่อง → schema Postgres แบบ append-only + hash chain · ทดสอบเจาะ RLS 21 ข้อผ่าน · ขึ้น VPS ของเราเอง</small></div>
-    <div class="tl old"><b>ก.ย. — v1 ออนไลน์</b><small>เว็บแอป + ระบบบัญชีอีเมล/รหัสผ่าน · รองรับลูกหลายคน · ย้ายข้อมูลจากเครื่องขึ้นฐานข้อมูล</small></div>
-    <div class="tl old"><b>11 ก.ย. — audit จาก log จริง</b><small>มี 8 บัญชี ยืนยันอีเมลได้ 2 · คลาส 0 รายการ ⇒ ไม่มีใครใช้จริง เพราะประตูเข้าแอปยากเกินไป (รหัสผ่าน · ยืนยันอีเมล · session หลุดบน iOS) และระบบไม่เคยเตือนวันเรียน</small></div>
-    <div class="tl"><b>29 ต.ค. — ตัดสินใจสร้าง v2 บน LINE</b><small>Next.js + LIFF + LINE OA · login ด้วย LINE ครั้งเดียว · เตือนผ่านแชทพร้อมปุ่ม · สร้าง M0–M7 จบในวันเดียวกันและย้ายระบบขึ้นจริงคืนนั้น</small></div>
-    <div class="tl"><b>30 ต.ค. – 1 พ.ย. — ขัดเกลาและทำ ops</b><small>เตือนก่อนเรียน 60 นาที · กฎเปลี่ยนวันเรียน · backup นอก VPS (restic → Backblaze B2) · health alert ผ่าน Telegram และ healthchecks.io</small></div>
-    <div class="tl"><b>1–2 พ.ย. — PDPA และแผนเปิดตัว</b><small>กลไกลบข้อมูลทั้งครัวเรือน · backup ที่รู้ว่าข้อมูลไหนถูกลบ · ร่างประกาศความเป็นส่วนตัว · แผนเปิดตัว · แยกระบบครู/เทรนเนอร์ออกเป็นอีกโปรเจกต์</small></div>
+    <div class="tl old"><span class="d">23 ส.ค. 2026</span><b>v1 เริ่มโปรเจกต์</b><small>เว็บแอป + API + ระบบบัญชีอีเมล/รหัสผ่าน · ฐานข้อมูลแบบเพิ่มอย่างเดียว · ขึ้น VPS ของเราเอง</small></div>
+    <div class="tl old"><span class="d">11 ก.ย.</span><b>ตรวจ v1 จาก log จริง: ไม่มีใครใช้</b><small>เข้าแอปยาก (รหัสผ่าน · ยืนยันอีเมล · session หลุดบน iOS) และไม่เคยเตือนวันเรียน · บันทึกแบบเขียนทับทั้งก้อน</small></div>
+    <div class="tl old"><span class="d">29 ต.ค.</span><b>v2 บน LINE สร้างและย้ายระบบในวันเดียว</b><small>Next.js + LIFF + LINE OA · login ด้วย LINE ครั้งเดียว · เตือนในแชทพร้อมปุ่ม เข้าเรียน / ลา / งดสอน · ย้ายโดเมนขึ้น v2 เวลา 20:03</small></div>
+    <div class="tl old"><span class="d">30 ต.ค. – 2 พ.ย.</span><b>ขัดเกลา + ops + PDPA</b><small>เตือนก่อนเรียน 60 นาที · backup นอกเครื่อง · health alert · กลไกลบข้อมูลทั้งครัวเรือน · แผนเปิดตัว · แยกระบบครู/เทรนเนอร์ออกไป</small></div>
+    <div class="tl old"><span class="d">3 พ.ย.</span><b>release 0011–0018 LIVE</b><small>PDPA · สิทธิ์การใช้งาน (entitlement) · ช่องทาง Telegram · นโยบายทดลองใช้และราคา v2</small></div>
+    <div class="tl old"><span class="d">4 พ.ย.</span><b>release 0019–0022 LIVE</b><small>เพดานช่วงทดลอง · ข้อกำหนดการใช้งาน · ญาติ · โครงสร้างข้อมูลการชำระเงิน</small></div>
+    <div class="tl old"><span class="d">8 พ.ย.</span><b>release 0023–0025b LIVE (ฉบับที่ใช้อยู่ตอนนี้)</b><small>checkout PromptPay · ขอความยินยอม Telegram ใหม่ + ประกาศความเป็นส่วนตัว 1.1.0 · บ้านที่ไม่ใช้งาน · ข้อมูลผู้ให้บริการ</small></div>
+    <div class="tl old"><span class="d">9 พ.ย.</span><b>รอบเตรียมเปิดรับชำระของ v2</b><small>คำตัดสินชุดใหญ่ (เพดานสมาชิก 2 คน · โฮสต์อัปโหลดสลิปแยก · ใบเสร็จ PDF) · อนุมัติระบบ staging ถาวร · รอบนี้ถูกพับเข้า v3 หลังเปลี่ยนทิศวันถัดมา</small></div>
+    <div class="tl"><span class="d">10 พ.ย.</span><b>เปลี่ยนทิศเป็น v3 "LINE Course Tracker"</b><small>รับสเปกส่งต่องาน · iceberg ให้ความเห็นเชิงกลยุทธ์ · nami แตกงาน P0–P9 · ตรวจข้อเท็จจริง LINE (R1–R6) · รวม P1 (แกนยอด 3 แบบ + ตัด/แก้รายการ) · P1b (บัญชีเดี่ยว 0029) · P2 (คลาสตามตาราง 0030 + ปุ่มใน Flow B) · P4a (ชิ้นส่วน Flex/Rich menu) · P7 (staging + ซ้อมกู้ข้อมูลรายเดือน + monitoring) · เลือก CI ครามสงบ (Calm Indigo) · ทำ PRODUCT.md และ DESIGN.md</small></div>
+    <div class="tl now"><span class="d">11 พ.ย. (วันนี้)</span><b>รวม 7 ชุดเข้า trunk · 2 ชุดรีวิวผ่านรอรวม · ตัดสินเรื่องแผนและราคา</b><small>รายละเอียดในตารางด้านล่าง · ระบบ staging พร้อมด้านโครงสร้าง (Access · DNS · ingress · secret ตรวจผ่าน) · ล้าง worktree เก่า 123 ชุด และ container ทดสอบ 48 ตัว (Mr.Foxx อนุมัติ)</small></div>
+  </div>
+
+  <h3>งานของวันที่ 11 พ.ย.</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>ชุดงาน (lane)</th><th>ทำอะไร</th><th>สถานะ</th></tr></thead>
+    <tbody>
+      <tr><td>P4b C+D</td><td>ตั้งค่า LINE OA จาก env · โหมด OA ทดสอบใน staging พร้อมด่านกันชี้ OA จริง</td><td><span class="tag t-merged">รวมแล้ว</span></td></tr>
+      <tr><td>แก้เทสต์เปราะ (dormant)</td><td>เทสต์บ้านไม่ใช้งานใช้เวลาจากฐานข้อมูล ไม่พังเพราะนาฬิกาเหลื่อม</td><td><span class="tag t-merged">รวมแล้ว</span></td></tr>
+      <tr><td>Lane E · 0031</td><td>ย้ายตัวตน LINE ของผู้ใช้เดิมไป OA/ช่อง login ใหม่ (identity rebind) พร้อมคำสั่ง dry-run / apply</td><td><span class="tag t-merged">รวมแล้ว</span></td></tr>
+      <tr><td>Lane X</td><td>สี Calm Indigo แบบตั้งชื่อตามหน้าที่ 15 ตัว · เอาฟอนต์ Nunito ออก · เมนูล่าง 3 แท็บ คอร์ส · ประวัติ · บัญชี (ไอคอนคน) · คำว่า "ลูกและคลาส" หายจาก UI</td><td><span class="tag t-merged">รวมแล้ว</span></td></tr>
+      <tr><td>Lane Y</td><td>คู่มือย้ายระบบ v3 (CUTOVER-V3) + คำสั่งตรวจตัวตน OA ก่อนย้าย + ตรวจ env staging</td><td><span class="tag t-merged">รวมแล้ว</span></td></tr>
+      <tr><td>TG-retire · 0032</td><td>เลิกใช้ Telegram ฝั่งผู้ใช้ทั้งหมด + ปิด webhook ขาเข้า (เก็บไว้เฉพาะแจ้งเตือนผู้ดูแลระบบ)</td><td><span class="tag t-merged">รวมแล้ว</span></td></tr>
+      <tr><td>Y3 + Y4</td><td>ขั้นตอน deploy/ถอยกลับตรวจรายการไฟล์ที่ rsync จะลบให้อัตโนมัติ (รวมโฟลเดอร์) แทนการไล่ตาดู</td><td><span class="tag t-merged">รวมแล้ว</span></td></tr>
+      <tr><td>P5a · 0033</td><td>เตือนก่อนคลาสส่งถึงเจ้าของบัญชีเท่านั้น · โควตาต่อแผน (Free 0 · Pro 100 · Max 300) · สวิตช์รับเตือน · ตรวจเจ้าของบัญชีทุกทางที่ตอบคลาส</td><td><span class="tag t-review">รีวิวผ่าน · ต้อง rebase ทับ 0032 แล้วตรวจซ้ำ</span></td></tr>
+      <tr><td>P4b-F</td><td>Flow A ในแชทจริง (เมนูตัดคอร์ส → รายการ → จำนวน → ยืนยัน) · ผู้ใช้ที่ยังไม่สมัครได้ข้อความชวนเปิดแอป · เฉพาะเจ้าของบัญชีตัดได้</td><td><span class="tag t-review">รีวิวผ่าน (chopper + jinbe) · รอรวม</span></td></tr>
+      <tr><td>Copy draft14</td><td>ข้อความทุก flow ใน LINE + LIFF + landing (ฉบับล่าสุด)</td><td><span class="tag t-review">ในรอบ law / zoro</span></td></tr>
+      <tr><td>Terms d7 / Privacy d6</td><td>ข้อกำหนดและประกาศความเป็นส่วนตัวฉบับ v3</td><td><span class="tag t-review">ร่าง · ยังไม่ผ่าน law/zoro</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>ลำดับงานต่อจากนี้</h3>
+  <p>เลข migration ที่วางไว้ (อาจเลื่อนตอนรวมจริง): P5b 0034 · P3 0035 (แปลงข้อมูลตอนย้ายระบบ) · P5c-3 0036 · P4c-UI 0037 · PL-A 0038 · PL-B 0039 · P6 ไม่มี migration</p>
+  <div class="card">
+    <div class="flowrow"><span class="s">trunk</span><span class="a">→</span><span class="s">P5a 0033</span><span class="a">→</span><span class="s">P5b 0034 เครื่องเตือนหมดอายุ</span></div>
+    <div class="flowrow"><span class="s">P5a</span><span class="a">→</span><span class="s">P5c-1 หน้าวันหมดอายุ + หน้าตัดคอร์ส</span><span class="a">→</span><span class="s">P5c-3 ป้ายชื่อไม่บังคับ</span><span class="a">→</span><span class="s">P4c-UI ฟอร์มเพิ่มคอร์ส</span><span class="a">→</span><span class="s p">ย้ายระบบ (cutover)</span></div>
+    <div class="flowrow"><span class="s">P5b</span><span class="a">→</span><span class="s">P5c-2 หน้าบัญชี (สวิตช์ + เวลาเตือน)</span></div>
+    <div class="flowrow"><span class="s">P5a</span><span class="a">→</span><span class="s">P6 ถอดแพ็ก Telegram</span><span class="a">→</span><span class="s">PL-A แผน/เพดาน/ไม่แช่แข็ง</span><span class="a">→</span><span class="s">PL-B ชำระเงิน v3</span><span class="a">→</span><span class="s p">เปิดรับชำระ</span></div>
+    <div class="flowrow"><span class="s">P8 เผยแพร่เอกสารกฎหมาย v3</span><span class="a">·</span><span class="s">staging ขึ้น image v3 + Mr.Foxx ทดสอบบนมือถือ</span></div>
+    <p class="hint" style="font-size:13px;margin-top:8px">ทำขนานได้: P6 ‖ P5b ‖ P5c-1 · PL-A ‖ P5c-3/P4c-UI · P4b-F ต้องรวมก่อน P4c-UI แตะเส้นทาง <code>/classes/new</code></p>
   </div>
 </section>
 
-<section id="scope">
-  <h2><span class="n">03</span>Scope — ทำอะไร ไม่ทำอะไร</h2>
-  <div class="grid g2">
-    <div class="card pro">
-      <h3>อยู่ใน scope (v2)</h3>
-      <ul>
-        <li>ผู้ใช้คือ <b>ผู้ปกครอง</b> ใช้เป็นครัวเรือน (2 คนดูข้อมูลชุดเดียวกัน)</li>
-        <li>จัดการลูก · คลาส · วันและเวลาเรียน · ชั่วโมงต่อครั้ง · นโยบายลา (ลาแล้วตัดชั่วโมงหรือไม่ตัด)</li>
-        <li>เติมชั่วโมง (topup) · บันทึกเข้าเรียน / ลา / งดสอน / ขาด / ปรับยอด</li>
-        <li>เตือนผ่าน LINE ก่อนเรียน พร้อมปุ่มตอบในแชท</li>
-        <li>ดูยอดคงเหลือและประวัติในแอป LIFF</li>
-        <li>สมุดบัญชีแก้ย้อนหลังไม่ได้ แก้ผิดด้วยรายการกลับรายการ (reversal)</li>
-        <li>backup · health alert · กลไกลบข้อมูลตาม PDPA</li>
-      </ul>
-    </div>
-    <div class="card con">
-      <h3>นอก scope (ตอนนี้)</h3>
-      <ul>
-        <li>ฟีเจอร์ฝั่งโรงเรียน / ครู / เทรนเนอร์ (แยกไปเป็นโปรเจกต์ใหม่ คนละ LINE OA ไม่ผสมข้อมูล)</li>
-        <li>รับชำระเงิน · แพ็กเกจเสียเงิน</li>
-        <li>เปิดสมัครสาธารณะแบบ self-serve</li>
-        <li>PWA · MINI App · ภาษาอังกฤษ</li>
-        <li>จำกัดจำนวนคลาสแบบทดลอง (ประเมินแล้วว่าไม่ควรทำ)</li>
-      </ul>
-    </div>
-  </div>
-  <div class="callout" style="margin-top:14px">
-    <b>ข้อขัดกันที่ต้องตัดสิน:</b> แผนเดิมกำหนดให้ v2 ใช้ในครอบครัวเท่านั้น แต่เป้าหมายล่าสุดคือ "ขายให้ได้มากที่สุด" ต้องปรับ scope ข้อนี้ก่อนเปิดให้คนนอก
-  </div>
-</section>
+<!-- ===================================================== 3 -->
+<section id="model">
+  <h2><span class="n">3</span>โมเดลคอร์ส</h2>
+  <p class="sub">คอร์ส 3 แบบ · วันหมดอายุ · คลัง · แก้รายการ · สถานะคลาส</p>
 
-<section id="usage">
-  <h2><span class="n">04</span>การใช้งาน</h2>
-  <h3>เส้นทางหลัก — วันเรียน</h3>
-  <div class="flow">
-    <span class="s">60 นาทีก่อนเรียน</span><span class="a">→</span>
-    <span class="s">LINE OA ส่งข้อความ + 3 ปุ่ม</span><span class="a">→</span>
-    <span class="s">ผู้ปกครองคนใดคนหนึ่งกด</span><span class="a">→</span>
-    <span class="s">ลงสมุดบัญชีภายใน ~2 วินาที</span><span class="a">→</span>
-    <span class="s">ตอบกลับยืนยันในแชท</span>
-  </div>
-  <table style="margin-top:16px">
-    <tr><th>สถานการณ์</th><th>สิ่งที่เกิดขึ้น</th></tr>
-    <tr><td>กด <b>เข้าเรียน</b></td><td>ตัดชั่วโมงตามที่ตั้งไว้ต่อครั้ง</td></tr>
-    <tr><td>กด <b>ลา</b></td><td>ตัดหรือไม่ตัด ขึ้นกับนโยบายลาของคลาสนั้น</td></tr>
-    <tr><td>กด <b>งดสอน</b></td><td>ไม่ตัดชั่วโมง บันทึกว่าโรงเรียนงดเอง</td></tr>
-    <tr><td>กดซ้ำ / สองคนกดพร้อมกัน</td><td>คนแรกชนะ ไม่บันทึกซ้ำ ตอบว่า "บันทึกแล้ว: X เมื่อ HH:MM"</td></tr>
-    <tr><td>ไม่ได้ตอบ</td><td>คาบนั้นค้างในแอปให้กดทีหลังได้ หมดอายุใน 7 วัน</td></tr>
-    <tr><td>กดผิด</td><td>ทำรายการกลับในแอป ประวัติเดิมยังอยู่ครบ</td></tr>
-  </table>
-  <h3>ในแอป (เปิดจากเมนูใน LINE)</h3>
   <div class="grid g3">
-    <div class="card"><b>ยอดคงเหลือ</b><br><span class="stat-l">ชั่วโมงที่เหลือของทุกคลาส</span></div>
-    <div class="card"><b>ประวัติ</b><br><span class="stat-l">ทุกรายการพร้อมเวลาและผู้บันทึก</span></div>
-    <div class="card"><b>ลูก &amp; คลาส</b><br><span class="stat-l">บังคับตั้งวันเรียน · พักคลาส</span></div>
-    <div class="card"><b>เติมชั่วโมง / บันทึกมือ</b><br><span class="stat-l">ซื้อแพ็กใหม่ · แก้ย้อนด้วย reversal</span></div>
-    <div class="card"><b>เชิญคู่สมรส</b><br><span class="stat-l">invite code เข้าครัวเรือนเดียวกัน</span></div>
-    <div class="card"><b>ตั้งค่า</b><br><span class="stat-l">เตือนก่อนเรียนกี่นาที (ค่าเริ่มต้น 60)</span></div>
-  </div>
-</section>
-
-<section id="benefits">
-  <h2><span class="n">05</span>ประโยชน์</h2>
-  <div class="grid g2">
-    <div class="card"><b>ไม่ต้องจำ ไม่ต้องจด</b><br>ระบบเป็นฝ่ายทักมาเอง ผู้ปกครองแค่กดปุ่มเดียวในแอปที่เปิดอยู่ทุกวันอยู่แล้ว</div>
-    <div class="card"><b>มีหลักฐานเวลาคุยกับโรงเรียน</b><br>ทุกรายการมีวันเวลาและแก้ย้อนหลังไม่ได้ ใช้ยืนยันยอดได้</div>
-    <div class="card"><b>พ่อแม่เห็นตรงกัน</b><br>ครัวเรือนร่วม ใครกดก็ได้ อีกคนเห็นทันที ไม่บันทึกซ้ำ</div>
-    <div class="card"><b>รู้ว่าแพ็กใกล้หมด</b><br>เห็นยอดคงเหลือทุกคลาสในหน้าเดียว วางแผนซื้อแพ็กใหม่ได้ทัน</div>
-    <div class="card"><b>เข้าใช้ง่าย</b><br>login ด้วย LINE ครั้งเดียว ไม่มีรหัสผ่าน ไม่ต้องยืนยันอีเมล (แก้ต้นเหตุที่ทำให้ v1 ไม่มีคนใช้)</div>
-    <div class="card"><b>ต้นทุนต่ำ</b><br>รันบน VPS ที่มีอยู่แล้ว · LINE ใช้แพ็กฟรี (~87 จาก 300 ข้อความ/เดือน)</div>
-  </div>
-</section>
-
-<section id="proscons">
-  <h2><span class="n">06</span>ข้อดี (Pro) และข้อเสีย (Con)</h2>
-  <div class="grid g2">
-    <div class="card pro">
-      <h3>Pro</h3>
-      <ul>
-        <li><b>ข้อมูลเชื่อถือได้:</b> สมุดบัญชี append-only 3 ชั้น (trigger ห้ามแก้/ลบ · role แอปเขียนเพิ่มได้อย่างเดียว · hash chain)</li>
-        <li><b>ใช้งานจริงแล้ว:</b> ยอดหลังย้ายระบบตรงกับระบบเก่าทุกคลาส · เตือนจริงทำงานตั้งแต่ 31 ต.ค.</li>
-        <li><b>ทนต่อการกดซ้ำและ LINE ส่งซ้ำ:</b> dedupe ทั้งระดับ event และระดับคาบ</li>
-        <li><b>ผ่านการตรวจหลายชั้น:</b> ทุกก้อนโค้ดผ่านผู้รีวิว และผ่าน audit อิสระก่อน deploy</li>
-        <li><b>ops ครบ:</b> backup รายวันพร้อมนับแถว · สำรองนอกเครื่อง · แจ้งเตือนเมื่อระบบล่ม · คู่มือ rollback</li>
-        <li><b>เตรียม PDPA ไว้แล้ว:</b> กลไกลบทั้งครัวเรือน · backup ที่ลบตามได้ภายใน 90 วัน · ร่างประกาศผ่านการตรวจแล้ว</li>
-        <li><b>ย้ายง่าย:</b> ทุกไฟล์อยู่ในโฟลเดอร์เดียว deploy บนเครื่องของเราเอง ไม่ผูกกับผู้ให้บริการรายใด</li>
-      </ul>
+    <div class="card">
+      <span class="tag t-merged">นับเป็นครั้ง (SESSION)</span>
+      <p>เช่น นวดหน้า 10 ครั้ง · ว่ายน้ำ 12 ครั้ง</p>
+      <p class="stat-l">ตัดทีละ 1 หรือ 2 ครั้ง หรือกรอกจำนวนอื่น · เก็บได้ถึงทศนิยม 2 ตำแหน่ง</p>
+      <p><b>ตัวอย่าง:</b> 10 ครั้ง ตัด 1 → <b>เหลือ 9 ครั้ง</b></p>
     </div>
-    <div class="card con">
-      <h3>Con</h3>
-      <ul>
-        <li><b>ยังไม่เคยพิสูจน์ตลาด:</b> ยังไม่ได้คุยกับผู้ปกครองหรือโรงเรียนอื่นสักราย</li>
-        <li><b>ผูกกับ LINE:</b> โควตาหมด = ระบบเงียบทั้งระบบ · เกิน 300 ข้อความต้องจ่าย 1,280 บาท+VAT/เดือน (ประมาณ 3–4 ครัวเรือนก็ชนเพดาน)</li>
-        <li><b>รับคนนอกได้ยาก:</b> ช่องทาง login ยังอยู่โหมด Developing ต้องเพิ่ม Tester และ allowlist ด้วยมือทีละครัวเรือน</li>
-        <li><b>ยังไม่ผ่านเกณฑ์ "เสร็จ" ของตัวเอง:</b> ต้องใช้ผ่าน LINE ต่อเนื่อง 2 สัปดาห์ · probe บางข้อยังไม่ได้ทดสอบ (Android · คนนอก allowlist · กดระหว่างแอป restart)</li>
-        <li><b>แยกข้อมูลหลายครัวเรือนด้วยเทสต์ ไม่ใช่ด้วย DB:</b> พอสำหรับ 5 ครัวเรือน ไม่พอสำหรับเปิดสาธารณะ</li>
-        <li><b>PDPA ยังไม่จบ:</b> ประกาศจริงรอชื่อแอป อีเมลกลาง และคำตอบทนาย (รวมเรื่อง backup ของผู้ให้บริการที่เก็บในต่างประเทศ)</li>
-        <li><b>ซับซ้อนกว่าขนาดผู้ใช้:</b> stack และขั้นตอน deploy หนักสำหรับครอบครัวเดียว ภาระดูแลตกที่คนเดียว</li>
-        <li><b>ยังไม่มีชื่อแบรนด์:</b> ชื่อที่ชอบชนกับแอปอื่น ใช้ชื่อชั่วคราว "สมุดชั่วโมงเรียน" ไปก่อน</li>
-      </ul>
+    <div class="card">
+      <span class="tag t-merged">นับเป็นชั่วโมง (DURATION)</span>
+      <p>เช่น เปียโน 20 ชั่วโมง ตัดทีละ 1 / 1.5 / 2 ชม.</p>
+      <p class="stat-l">เก็บเป็นนาทีจำนวนเต็ม (20 ชม. = 1,200 นาที) แสดงเป็น ชม.</p>
+      <p><b>ตัวอย่าง:</b> 20 ชม. ตัด 1.5 ชม. (90 นาที) → <b>เหลือ 18.5 ชม.</b></p>
+    </div>
+    <div class="card">
+      <span class="tag t-merged">นับเป็นมูลค่าบริการ (VALUE)</span>
+      <p>เช่น จ่ายร้านทำผม 50,000 บาท ร้านให้มูลค่าบริการ 70,000 บาท</p>
+      <p class="stat-l">เก็บเป็นสตางค์จำนวนเต็ม · แสดง "เงินที่คุณจ่ายร้าน" กับ "ส่วนที่ร้านให้เพิ่ม" แยกกัน</p>
+      <p><b>ตัวอย่าง:</b> มูลค่า 70,000 (ร้านให้เพิ่ม 20,000) ใช้บริการ 3,500 → <b>คงเหลือตามที่คุณบันทึก 66,500 บาท</b></p>
     </div>
   </div>
-  <h3>เทียบ v1 กับ v2</h3>
-  <table>
-    <tr><th>ประเด็น</th><th>v1 (ส.ค.–ต.ค.)</th><th>v2 (ต.ค.–ปัจจุบัน)</th></tr>
-    <tr><td>เข้าใช้งาน</td><td>อีเมล + รหัสผ่าน + ยืนยันอีเมล</td><td>LINE ครั้งเดียว</td></tr>
-    <tr><td>เตือนวันเรียน</td><td><span class="tag t-bad">ไม่มี</span></td><td><span class="tag t-good">LINE ก่อนเรียน 60 นาที</span></td></tr>
-    <tr><td>บันทึก</td><td>ต้องเปิดแอปเอง</td><td>กดปุ่มในแชท</td></tr>
-    <tr><td>แก้ย้อนหลัง</td><td><span class="tag t-bad">ได้ (เขียนทับทั้งก้อน)</span></td><td><span class="tag t-good">ไม่ได้ (append-only)</span></td></tr>
-    <tr><td>ผู้ใช้จริง</td><td>เกือบไม่มี</td><td>ครอบครัวใช้ทุกสัปดาห์</td></tr>
-    <tr><td>Backup / แจ้งเตือนล่ม</td><td>ไม่มี</td><td>รายวัน + นอกเครื่อง + alert</td></tr>
-  </table>
-</section>
 
-<section id="tech">
-  <h2><span class="n">07</span>เทคนิคโดยสรุป</h2>
+  <div class="callout warn">
+    <svg width="20" height="20" aria-hidden="true"><use href="#i-alert"/></svg>
+    <div>คอร์สแบบมูลค่าเป็น <b>บันทึกส่วนตัวที่ผู้ใช้กรอกเอง</b> เราไม่ได้รับ ถือ หรือโอนเงินหรือเครดิตใดๆ ทุกจุดที่แสดงยอดแบบนี้ต้องใช้คำ "ตามที่คุณบันทึก" และแสดงข้อความชี้แจงสั้นแบบเต็มทุกคำ (ห้ามย่อหรือซ่อน) ตามเงื่อนไขของ law เพื่อไม่ให้ดูเหมือนกระเป๋าเงินหรือ e-money</div>
+  </div>
+
+  <h3>ข้อมูลของคอร์ส</h3>
+  <p>ชื่อคอร์ส · ชนิด · ป้ายชื่อ (ใช้กับใคร · ไม่บังคับ) · ร้าน/ครู (ไม่บังคับ) · ยอดตั้งต้น · ยอดคงเหลือ · เงินที่จ่ายร้าน (เฉพาะ VALUE · ไม่บังคับ) · วันที่ซื้อ · วันหมดอายุ (ไม่บังคับ) · หมายเหตุ · สถานะใช้อยู่/เก็บเข้าคลัง · เวลาไทย (Asia/Bangkok)</p>
+  <p class="stat-l">ชื่อคอร์สยาว 1–60 ตัว · ป้ายชื่อ 1–40 ตัว · ฟอร์มเตือนไม่ให้ใส่ข้อมูลสุขภาพ (เช่น ชื่อโรคหรือการบำบัด) เพราะชื่อคอร์สจะขึ้นบนหน้าจอล็อกมือถือตอนมีข้อความเตือน</p>
+
+  <h3>กฎการตัดยอด</h3>
+  <ul>
+    <li>ทุกการตัดเป็น <b>database transaction</b> ที่ล็อกคอร์ส ตรวจยอดคงเหลือ และใช้ idempotency key กดซ้ำหรือกดพร้อมกันสองเครื่อง = ตัดครั้งเดียว ("รายการนี้ตัดยอดไปแล้ว ไม่ได้ตัดซ้ำ")</li>
+    <li><b>ยอดไม่ติดลบ</b> ถ้ายอดไม่พอ ระบบไม่ตัดและบอกทางแก้ (ลดจำนวน หรือ บันทึกซื้อเพิ่ม)</li>
+    <li>คอร์สเก่าจาก v2 ที่ยอดติดลบอยู่แล้ว (ใช้เกินที่เติมไว้) ยังไม่ให้ตัดเพิ่ม จนกว่าจะบันทึกซื้อเพิ่มให้ยอดพอ</li>
+    <li>ห้ามให้ LLM คำนวณหรือเขียนยอด · ห้ามเชื่อตัวเลขที่ส่งมาจากเครื่องผู้ใช้ ยอดก่อนและหลังคำนวณที่เซิร์ฟเวอร์</li>
+    <li><b>บันทึกซื้อเพิ่ม</b> = บวกยอดเข้าคอร์สเดิม (ซื้อแพ็กเดิมเพิ่มกับร้าน) แสดงยอดก่อน → หลังก่อนยืนยัน</li>
+  </ul>
+
   <div class="grid g2">
     <div class="card">
-      <b>Stack</b>
+      <h4 style="margin-top:0">วันหมดอายุ</h4>
       <ul>
-        <li>Next.js 16 · TypeScript strict · Tailwind 4</li>
-        <li>PostgreSQL 16 · drizzle (migration 13 ชุด)</li>
-        <li>worker แยก: scheduler ทุก 60 วิ + outbox ส่งข้อความ</li>
-        <li>LINE Login (LIFF) + LINE Messaging API (webhook / postback)</li>
-        <li>Docker compose บน VPS ของเราเอง ผ่าน Cloudflare tunnel</li>
+        <li>ไม่บังคับ · แก้ทีหลังได้เมื่อร้านขยายเวลา · ตั้งเป็นวันที่ผ่านไปแล้วไม่ได้ (วันนี้ได้)</li>
+        <li>คำนวณ "อีกกี่วัน" จากวันที่ฝั่งเซิร์ฟเวอร์ตามเวลาไทย ไม่ใช่นาฬิกาเครื่อง</li>
+        <li>สถานะ 5 แบบ: ยังไม่หมดอายุ · อีก N วัน (≤ 14) · หมดอายุวันนี้ (ยังตัดได้ถึงสิ้นวัน) · หมดอายุแล้ว · ไม่มีวันหมดอายุ</li>
+        <li>หมดอายุแล้ว = ยังตัดไม่ได้ ต้องแก้วันหมดอายุก่อนถ้าร้านขยายให้</li>
+        <li>ตอนนี้ฐานข้อมูลมีช่องวันหมดอายุแล้ว แต่ <span class="tag t-plan">หน้าจอยังไม่ได้ทำ</span> (P5c-1)</li>
       </ul>
     </div>
     <div class="card">
-      <b>ความปลอดภัยและความถูกต้อง</b>
+      <h4 style="margin-top:0">เก็บเข้าคลัง (archive)</h4>
       <ul>
-        <li>ตรวจลายเซ็น webhook แบบ timing-safe · จำกัดขนาด body · rate limit</li>
-        <li>session cookie แบบ <code>__Host-</code> · CSRF · env ขาดแล้วไม่ยอมรัน (fail-closed)</li>
-        <li>เทสต์ mutant: ถอดกลไกกันแก้ทีละชั้นแล้วเทสต์ต้องแดง</li>
-        <li>เทสต์แยกข้อมูลครัวเรือนครอบคลุมทุก export</li>
-        <li>เก็บ secret นอก repo และนอก build context</li>
+        <li>คอร์สที่ใช้หมดหรือเลิกใช้ เก็บเข้าคลังได้ ประวัติยังอยู่ และ <b>ไม่นับในโควตาคอร์สที่ใช้อยู่</b></li>
+        <li>นำกลับมาใช้ได้จากแท็บ "คลัง" ถ้าโควตาแผนยังว่าง ถ้าเต็มต้องเก็บคอร์สอื่นก่อน</li>
+        <li>ปุ่มในข้อความเก่าที่ชี้ไปคอร์สในคลัง = "คอร์สนี้เก็บเข้าคลังไปแล้ว ไม่ได้ตัดยอด"</li>
+        <li><span class="tag t-plan">หน้าจอคลังยังไม่มี</span> (อยู่ในงานหน้าแรก/Flow C)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">แก้รายการ (reversal)</h4>
+      <ul>
+        <li>ไม่มีการลบหรือแก้ทับ · "แก้รายการ" = เพิ่มรายการใหม่หักล้างรายการเดิม พร้อมเหตุผล (บังคับ) และ audit log</li>
+        <li>รายการเดิมยังอยู่ในประวัติ ขึ้นป้าย "แก้แล้ว" · แก้ซ้ำไม่ได้ · ถ้าแก้แล้วยอดจะติดลบ ระบบไม่ให้แก้</li>
+        <li>แก้รายการเข้าเรียนของคลาส → คลาสนั้นกลับไปอยู่ใน "รายการรอยืนยัน" เลือกใหม่ได้</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">สถานะคลาสตามตาราง (Flow B)</h4>
+      <ul>
+        <li><b>เข้าเรียน</b> → ตัดตามระยะเวลา/จำนวนของคลาส (VALUE ให้กรอกมูลค่าก่อน)</li>
+        <li><b>ลา</b> / <b>งดสอน</b> → บันทึกสถานะ <b>ไม่ตัดยอด</b></li>
+        <li><b>ไม่กด</b> → ค้างเป็น "รอยืนยัน" ไม่ตัด ไม่เตือนซ้ำ กลับมากดข้อความเก่าหรือเข้าหน้ารอยืนยันทีหลังได้ (แม้ผ่านไป 30 วันก็ยังอ้างคลาสเดิม)</li>
+        <li>1 คลาสในตาราง = push ได้ไม่เกิน 1 ครั้ง แม้มี retry</li>
       </ul>
     </div>
   </div>
-  <h3>วิธีทำงานของทีม</h3>
-  <div class="flow">
-    <span class="s">วางแผน / แตกงาน</span><span class="a">→</span>
-    <span class="s">เขียนโค้ด</span><span class="a">→</span>
-    <span class="s">รีวิว (four-eyes)</span><span class="a">→</span>
-    <span class="s">audit อิสระ</span><span class="a">→</span>
-    <span class="s">เจ้าของอนุมัติ deploy</span><span class="a">→</span>
-    <span class="s">ตรวจหลัง deploy ตามคู่มือ</span>
-  </div>
 </section>
 
+<!-- ===================================================== 4 -->
+<section id="ux">
+  <h2><span class="n">4</span>UX — ทุก flow ที่ตั้งใจทำ</h2>
+  <p class="sub">ข้อความในภาพจำลองมาจาก copy draft14 (ฉบับที่อยู่ในรอบตรวจของ law/zoro) · ภาพเป็น wireframe ไม่ใช่ภาพหน้าจอจริง · ตัวเลขและชื่อคอร์สเป็นตัวอย่าง</p>
+
+  <div class="tbl"><table>
+    <thead><tr><th>Flow / หน้าจอ</th><th>สถานะ</th><th>อยู่ในงาน</th></tr></thead>
+    <tbody>
+      <tr><td>สมัคร / เข้าใช้ด้วย LINE (บัญชีเดี่ยว)</td><td><span class="tag t-review">บางส่วน</span> โครงบัญชีเดี่ยวรวมแล้ว · หน้าสมัคร v3 ยังต้องทำ</td><td>P1b · P8</td></tr>
+      <tr><td>Rich menu v3 (6 ปุ่ม)</td><td><span class="tag t-merged">ไฟล์เมนูมีใน trunk</span> · ปุ่มตารางเรียนยังชี้หน้าที่ไม่มี</td><td>P4a · Q3</td></tr>
+      <tr><td>Flow A ตัดคอร์สในแชท</td><td><span class="tag t-review">รีวิวผ่าน รอรวม</span></td><td>P4b-F</td></tr>
+      <tr><td>Flow A แบบมูลค่า → หน้าตัดคอร์ส LIFF</td><td><span class="tag t-plan">วางแผน</span> (ระหว่างนี้ VALUE ในแชทยังใช้ไม่ได้)</td><td>P5c-1</td></tr>
+      <tr><td>Flow B เตือนก่อนคลาส (Pro/Max)</td><td><span class="tag t-merged">ปุ่มและการตอบรวมแล้ว</span> · ส่งถึงเจ้าของ + โควตา <span class="tag t-review">รอรวม</span></td><td>P2 · P5a</td></tr>
+      <tr><td>เตือนก่อนคอร์สหมดอายุ 14 / 3 วัน (Pro/Max)</td><td><span class="tag t-plan">วางแผน</span></td><td>P5b · P5c-2</td></tr>
+      <tr><td>ป้ายวันหมดอายุ + แถบเตือนในแอป (ทุกแผน)</td><td><span class="tag t-plan">วางแผน</span></td><td>P5c-1</td></tr>
+      <tr><td>Flow C ฟอร์มเพิ่มคอร์ส 3 แบบ</td><td><span class="tag t-plan">วางแผน</span> · ต้องเสร็จก่อนย้ายระบบ</td><td>P4c-UI</td></tr>
+      <tr><td>ประวัติ + แก้รายการ</td><td><span class="tag t-review">บางส่วน</span> ระบบหักล้างในฐานข้อมูลรวมแล้ว · หน้าประวัติมาจาก v2 ต้องปรับคำ</td><td>P1 · งานหน้าจอถัดไป</td></tr>
+      <tr><td>หน้าบัญชี (สวิตช์เตือน · แผน)</td><td><span class="tag t-review">บางส่วน</span> ชื่อแท็บ/หัวหน้า "บัญชี" รวมแล้ว · สวิตช์ยังไม่ทำ</td><td>Lane X · P5c-2</td></tr>
+    </tbody>
+  </table></div>
+
+  <!-- 4.1 -->
+  <h3>4.1 สมัครและเข้าใช้ด้วย LINE</h3>
+  <ol class="steps">
+    <li>ผู้ใช้เจอหน้า landing สาธารณะ หรือเพิ่มเพื่อน LINE OA <b>ตัดคอร์ส</b> แล้วเห็น rich menu</li>
+    <li>กด <span class="q">เริ่มใช้ฟรีด้วย LINE</span> หรือปุ่มเมนูใดก็ได้ → เปิด LIFF ภายใน LINE → login ด้วย LINE อัตโนมัติ (ไม่มีรหัสผ่าน ไม่มียืนยันอีเมล)</li>
+    <li>หน้าสมัครให้ติ๊กช่องรับรอง (ห้ามติ๊กไว้ก่อน · ปุ่มไปต่อใช้ไม่ได้จนกว่าจะติ๊ก):<br><i>"ฉันอายุ 20 ปีขึ้นไป หรือผู้ปกครองของฉันได้อ่าน[ข้อกำหนดการใช้งาน]และ[ประกาศความเป็นส่วนตัว]แล้ว และยินยอมให้ฉันใช้บริการตามข้อกำหนดการใช้งาน"</i></li>
+    <li>เก็บเฉพาะ: ติ๊กหรือไม่ + เวลา + เวอร์ชันเอกสารทั้งสอง · ไม่เก็บอายุหรือวันเกิด</li>
+    <li>เสร็จ = บัญชีแผน Free · ช่องเดียวกันนี้ใช้อีกครั้งตอน <b>ชำระเงินครั้งแรก</b> และตอน <b>เอกสารเปลี่ยนเวอร์ชัน</b> (หน้า "ข้อกำหนดและประกาศความเป็นส่วนตัวมีการอัปเดต" → ปุ่ม "ยอมรับและใช้งานต่อ")</li>
+  </ol>
+  <p><b>ถ้ายังไม่สมัครแต่กด "ตัดคอร์ส" ในแชท</b> → บอทตอบ <i>"คุณยังไม่ได้สมัครใช้งาน · เปิดแอปเพื่อสมัครด้วย LINE ก่อน แล้วค่อยกลับมาตัดคอร์ส"</i> พร้อมปุ่ม <span class="q">เปิดแอป</span> (ถ้าสมัครแล้วแต่ยังไม่มีคอร์ส ใช้ข้อความ "ยังไม่มีคอร์ส · เพิ่มคอร์สแรกได้เลย" แทน)</p>
+  <details>
+    <summary>หน้า landing สาธารณะ (ข้อความใหม่ · ต้องผ่าน law ก่อนใช้)</summary>
+    <div class="body">
+      <p>law ตรวจแล้วว่าหน้า landing เดิมใน trunk <b>ไม่ตรงความจริงภายใต้ v3</b> (พูดถึงทดลองใช้ ครอบครัว เตือนผู้ใช้ Free) จึงเขียนใหม่ทั้งหน้า ลำดับ: hero → ปุ่มเริ่ม → จุดเด่น 4 ข้อ → 3 ขั้น → ราคา</p>
+      <ul>
+        <li><b>หัว:</b> "ดูยอดคงเหลือคอร์สที่ซื้อไว้ล่วงหน้า ในที่เดียว"</li>
+        <li><b>รอง:</b> "ใช้ได้กับเรียนพิเศษ นวด ทำผม ล้างรถ แล้วตัดยอดเองทุกครั้งที่ใช้บริการ"</li>
+        <li><b>ป้าย:</b> "ใช้ฟรีไม่จำกัดเวลาด้วยแผน Free"</li>
+        <li><b>3 ขั้น:</b> กดปุ่ม เริ่มใช้ฟรีด้วย LINE แล้วยืนยันการสมัคร → เพิ่มคอร์สที่ซื้อไว้ ใส่จำนวนที่เหลือ และวันหมดอายุถ้ามี → ใช้บริการแล้วกดตัดคอร์สเอง ดูยอดก่อนและหลังตัด แล้วกดยืนยัน</li>
+        <li><b>จุดเด่น:</b> ยอดเปลี่ยนเมื่อคุณกดเองเท่านั้น · เตือนก่อนคอร์สหมดอายุ · รู้ยอดคงเหลือ และประวัติไม่หาย · ใช้ได้กับคอร์สหลายแบบ</li>
+        <li><b>เงื่อนไขปล่อย:</b> ขั้น "เพิ่มคอร์ส" ปล่อยได้เมื่อ P5c-1 และ Flow C ใช้งานจริงแล้ว · บล็อกราคาห้ามแสดงจนกว่าจะมีราคา v3 ในระบบและเปิดรับชำระ</li>
+        <li><b>ตั้งใจไม่อ้าง:</b> ครอบครัว/ลูก/คลาส · "ไม่ต้องจดเอง" · ทดลองใช้ฟรี · เตือนก่อนคลาสกับผู้ใช้ Free · ใช้ร่วมกัน · ตัดอัตโนมัติ · สิ่งที่เกิดเมื่อแผนเสียเงินหมดอายุ (ยังไม่ตัดสิน)</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- 4.2 -->
+  <h3>4.2 Rich menu v3 (เมนูล่างในแชท)</h3>
+  <div class="mocks">
+    <div>
+      <div class="phone"><div class="bar"><span>9:41</span><span>LINE</span></div>
+        <div class="scr chat">
+          <div class="chathead"><span class="av">ตค</span>ตัดคอร์ส</div>
+          <div class="msgs"><div class="bot">สวัสดีครับ กดเมนูด้านล่างได้เลย</div></div>
+          <div class="rm">
+            <div class="p"><svg aria-hidden="true"><use href="#i-cut"/></svg>ตัดคอร์ส</div>
+            <div><svg aria-hidden="true"><use href="#i-book"/></svg>คอร์สของฉัน</div>
+            <div><svg aria-hidden="true"><use href="#i-plus"/></svg>เพิ่มคอร์ส</div>
+            <div><svg aria-hidden="true"><use href="#i-cal"/></svg>ตารางเรียน</div>
+            <div><svg aria-hidden="true"><use href="#i-list"/></svg>ประวัติ</div>
+            <div><svg aria-hidden="true"><use href="#i-user"/></svg>บัญชี</div>
+          </div>
+          <div class="chatbar">เมนูคอร์ส ▾</div>
+        </div>
+      </div>
+      <div class="mockcap">Rich menu 6 ปุ่ม 2 แถว × 3 ช่อง · ป้ายแถบแชท "เมนูคอร์ส" · ปุ่มหลัก "ตัดคอร์ส" ใช้สี primary</div>
+    </div>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>ปุ่ม</th><th>ทำอะไร</th><th>หมายเหตุ</th></tr></thead>
+    <tbody>
+      <tr><td><b>ตัดคอร์ส</b></td><td>postback → บอทตอบรายการคอร์สในแชท (Flow A) ไม่ต้องเปิดแอป</td><td>ปุ่มหลัก · ทำงานเมื่อรวม P4b-F</td></tr>
+      <tr><td>คอร์สของฉัน</td><td>เปิด LIFF หน้าจัดการคอร์ส</td><td></td></tr>
+      <tr><td>เพิ่มคอร์ส</td><td>เปิด LIFF ฟอร์มเพิ่มคอร์ส (Flow C)</td><td>ฟอร์ม v3 = P4c-UI</td></tr>
+      <tr><td>ตารางเรียน</td><td>เปิด LIFF หน้าตารางเรียน</td><td><span class="tag t-bad">หน้านี้ยังไม่มี</span> รอ Mr.Foxx เลือกทาง (Q3)</td></tr>
+      <tr><td>ประวัติ</td><td>เปิด LIFF ประวัติ</td><td></td></tr>
+      <tr><td>บัญชี</td><td>เปิด LIFF หน้าแผน/บัญชี</td><td>มีส่วนย่อย "แผนของคุณ"</td></tr>
+    </tbody>
+  </table></div>
+  <p class="stat-l">แนวคิดยืมจาก LINE OA จดรายรับรายจ่าย "ป้านวล" (ปุ่มหลักเด่น · ตอบเป็นการ์ดทันที · แถบใช้ไป/ทั้งหมด) แต่ไม่ลอกหน้าตาและไม่ใช้สีชมพูของเขา</p>
+
+  <!-- 4.3 -->
+  <h3>4.3 Flow A — ตัดคอร์สในแชท <span class="tag t-review">รีวิวผ่าน รอรวม</span></h3>
+  <ol class="steps">
+    <li>กด <b>ตัดคอร์ส</b> → เซิร์ฟเวอร์ตรวจลายเซ็น LINE และสิทธิ์ (ต้องเป็นเจ้าของบัญชี) → ตอบ <b>Flex carousel</b> "เลือกคอร์สที่จะตัด" แสดงคอร์สที่ใช้อยู่พร้อมยอด</li>
+    <li>คอร์สเยอะ: 1 carousel ได้ 12 ใบ = 11 คอร์ส + ใบ "ดูเพิ่ม · ยังมีอีก N คอร์ส" (หน้าถัดไป) และปุ่ม "ดูทั้งหมดในแอป"</li>
+    <li>กด "เลือกคอร์สนี้" → ถามจำนวน: แบบครั้ง <i>"ใช้กี่ครั้ง?"</i> (1 ครั้ง · 2 ครั้ง · จำนวนอื่น) · แบบชั่วโมง <i>"ใช้กี่ชั่วโมง?"</i> (1 · 1.5 · 2 ชม. · จำนวนอื่น) ตัวเลือกที่ตรงตารางเรียนต่อท้าย "· ตามตาราง"</li>
+    <li>หน้า <b>ยืนยันการตัดคอร์ส</b>: ชื่อคอร์ส · ใช้เท่าไร · ก่อนตัด → หลังตัด (จากเซิร์ฟเวอร์) · ปุ่ม "ยืนยันตัด" / "ยกเลิก"</li>
+    <li>ยืนยัน → ตัดยอดใน transaction เดียว → ตอบ "ตัดยอดแล้ว" (แสดงหลังฐานข้อมูลตอบสำเร็จเท่านั้น) + คงเหลือ + ปุ่ม "ดูประวัติ" / "ตัดคอร์สอื่น"</li>
+    <li>กด "ยกเลิก" → <i>"ยกเลิกแล้ว ยังไม่ได้ตัดยอด"</i> · กดยืนยันซ้ำ → <i>"รายการนี้ตัดยอดไปแล้ว ไม่ได้ตัดซ้ำ"</i></li>
+  </ol>
+  <div class="mocks">
+    <div>
+      <div class="phone"><div class="bar"><span>9:41</span><span>LINE</span></div>
+        <div class="scr chat">
+          <div class="chathead"><span class="av">ตค</span>ตัดคอร์ส</div>
+          <div class="msgs">
+            <div class="me">ตัดคอร์ส</div>
+            <div class="bot" style="font-weight:700">เลือกคอร์สที่จะตัด</div>
+            <div class="carousel">
+              <div class="flex"><div class="fx-h">เปียโน (ครูมะลิ)</div><div class="fx-b"><div class="big">เหลือ 18.5 ชม.</div><div class="mut">สำหรับ ลูกคนที่ 1</div><div class="mut">หมดอายุ 31 ม.ค. 2027</div><span class="fx-btn p">เลือกคอร์สนี้</span></div></div>
+              <div class="flex"><div class="fx-h">นวดหน้า</div><div class="fx-b"><div class="big">เหลือ 2 ครั้ง</div><div class="mut" style="color:var(--warning);font-weight:700">ใกล้หมดแล้ว</div><span class="fx-btn p">เลือกคอร์สนี้</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mockcap">ขั้น 1: รายการคอร์สเป็น Flex carousel (ใบละคอร์ส)</div>
+    </div>
+    <div>
+      <div class="phone"><div class="bar"><span>9:41</span><span>LINE</span></div>
+        <div class="scr chat">
+          <div class="chathead"><span class="av">ตค</span>ตัดคอร์ส</div>
+          <div class="msgs">
+            <div class="bot">ใช้กี่ชั่วโมง?</div>
+            <div class="qr"><span>1 ชม.</span><span>1.5 ชม. · ตามตาราง</span><span>2 ชม.</span><span>จำนวนอื่น</span><span>ย้อนกลับ</span></div>
+            <div class="flex"><div class="fx-h">ยืนยันการตัดคอร์ส</div><div class="fx-b"><b>เปียโน (ครูมะลิ)</b><div>ใช้ 1.5 ชม.</div><div class="mut">ก่อนตัด: 20 ชม.</div><div class="big">หลังตัด: 18.5 ชม.</div><div class="mut">ตัดยอดแล้วยังแก้รายการได้ในประวัติ</div><span class="fx-btn p">ยืนยันตัด</span><span class="fx-btn g">ยกเลิก</span></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="mockcap">ขั้น 2–3: เลือกจำนวน แล้วดูก่อน → หลัง ก่อนกดยืนยัน</div>
+    </div>
+    <div>
+      <div class="phone"><div class="bar"><span>9:41</span><span>LINE</span></div>
+        <div class="scr chat">
+          <div class="chathead"><span class="av">ตค</span>ตัดคอร์ส</div>
+          <div class="msgs">
+            <div class="me">ยืนยันตัด</div>
+            <div class="flex"><div class="fx-h" style="display:flex;gap:5px;align-items:center"><svg width="14" height="14" style="color:var(--success)" aria-hidden="true"><use href="#i-check"/></svg>ตัดยอดแล้ว</div><div class="fx-b"><div>เปียโน (ครูมะลิ): ใช้ 1.5 ชม.</div><div class="big">คงเหลือ 18.5 ชม.</div><span class="fx-btn">ดูประวัติ</span><span class="fx-btn g">ตัดคอร์สอื่น</span></div></div>
+            <div class="flex"><div class="fx-h">ร้านทำผม</div><div class="fx-b"><div>บริการครั้งนี้มูลค่าเท่าไร?</div><span class="fx-btn p">กรอกมูลค่า</span><div class="mut">แบบมูลค่า → เปิดหน้าตัดคอร์สใน LIFF</div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="mockcap">ขั้น 4: การ์ดสำเร็จ · แบบมูลค่าไปกรอกในหน้า LIFF (ข้อ 4.7)</div>
+    </div>
+  </div>
+  <details>
+    <summary>ป้ายบนการ์ดคอร์สใน carousel ทุกแบบ</summary>
+    <div class="body">
+      <ul>
+        <li>แบบครั้ง <i>"เหลือ {n} ครั้ง"</i> · แบบชั่วโมง <i>"เหลือ {h} ชม."</i> · แบบมูลค่า <i>"คงเหลือตามที่คุณบันทึก {amt} บาท"</i></li>
+        <li><i>"สำหรับ {ป้ายชื่อ}"</i> (ถ้ามี) · <i>"หมดอายุ {วันที่}"</i> (ถ้ามี) · <i>"ใกล้หมดแล้ว"</i> (เกณฑ์ "น้อย" ให้ dev/PM กำหนด)</li>
+        <li>คอร์สหมดอายุ: <i>"หมดอายุแล้ว · ยังตัดไม่ได้"</i> ปุ่ม "แก้วันหมดอายุ" · คอร์สติดลบ: <i>"ยอดติดลบ · ยังตัดไม่ได้"</i> ปุ่ม "บันทึกซื้อเพิ่ม"</li>
+        <li>ไม่มีคอร์ส: <i>"ยังไม่มีคอร์ส · เพิ่มคอร์สแรกได้เลย"</i> ปุ่ม "เพิ่มคอร์ส"</li>
+      </ul>
+      <p class="stat-l">ข้อจำกัด LINE ที่ตรวจกับเอกสารแล้ว: altText ≤ 1,500 ตัว · postback data ≤ 300 ตัว · quick reply ≤ 13 ปุ่ม · carousel ≤ 12 ใบ · reply 1 ครั้ง ≤ 5 ข้อความ · ความยาวป้ายปุ่มยังต้องตรวจกับเอกสารทางการก่อน build</p>
+    </div>
+  </details>
+
+  <!-- 4.4 -->
+  <h3>4.4 Flow B — ข้อความเตือนก่อนคลาส (Pro / Max)</h3>
+  <p>ผู้ใช้ตั้งตารางเรียนประจำให้คอร์ส (วัน · เวลาเริ่ม · เรียนนานเท่าไร) → worker สร้างคลาสล่วงหน้า แล้วส่ง push <b>1 ครั้งต่อคลาส</b> ไปที่เจ้าของบัญชีเท่านั้น ตามเวลาเตือนที่ตั้ง (15 นาที / 1 ชั่วโมง / 1 วัน) · ข้อความเตือน<b>ไม่แสดงยอด</b> (เพราะ Flex เก่าจะแสดงยอด ณ ตอนส่ง) ยอดจริงขึ้นในข้อความตอบหลังกด</p>
+  <div class="mocks">
+    <div>
+      <div class="phone"><div class="bar"><span>9:41</span><span>LINE</span></div>
+        <div class="scr chat">
+          <div class="chathead"><span class="av">ตค</span>ตัดคอร์ส</div>
+          <div class="msgs">
+            <div class="flex"><div class="fx-h">เปียโน (ครูมะลิ)</div><div class="fx-b"><div>อีก 1 ชม. · เสาร์ 10:00</div><div class="mut">สำหรับ ลูกคนที่ 1</div><b>ครั้งนี้ไปไหม?</b><div class="mut">กด "เข้าเรียน" ตัด 1.5 ชม. ตามเวลาคลาส<br>"ลา" และ "งดสอน" ไม่ตัดยอด</div><span class="fx-btn p">เข้าเรียน</span><span class="fx-btn">ลา</span><span class="fx-btn">งดสอน</span><div class="mut" style="margin-top:4px">ยังไม่กดก็ไม่ตัดยอด และไม่เตือนซ้ำ</div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="mockcap">push เตือนก่อนคลาส · บนหน้าจอล็อกขึ้นเป็น "{คอร์ส} {อีกกี่นาที} ({เวลา})"</div>
+    </div>
+    <div>
+      <div class="phone"><div class="bar"><span>10:05</span><span>LINE</span></div>
+        <div class="scr chat">
+          <div class="chathead"><span class="av">ตค</span>ตัดคอร์ส</div>
+          <div class="msgs">
+            <div class="me">เข้าเรียน</div>
+            <div class="flex"><div class="fx-h">ตัดยอดแล้ว</div><div class="fx-b"><div>เปียโน (ครูมะลิ) · เข้าเรียน 15 พ.ย.</div><div class="big">ใช้ 1.5 ชม. · คงเหลือ 17 ชม.</div><div class="mut">ผิดปุ่ม? แก้ได้ในประวัติ</div></div></div>
+            <div class="me">เข้าเรียน</div>
+            <div class="bot">คลาสนี้ตอบไปแล้ว: เข้าเรียน<br>ตัดยอด 1.5 ชม. เมื่อ … ไม่ได้ตัดซ้ำ<br><span style="color:var(--primary);font-weight:700">แก้ในประวัติ</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="mockcap">ตอบหลังกด + กดซ้ำได้สถานะเดิม ไม่ตัดซ้ำ</div>
+    </div>
+  </div>
+  <details>
+    <summary>รายละเอียด Flow B: กดแต่ละปุ่ม · กรณีผิดพลาด · รายการรอยืนยัน · โควตา</summary>
+    <div class="body">
+      <h4>ข้อความอธิบายตามชนิดคอร์ส</h4>
+      <ul>
+        <li>แบบครั้ง: <i>"คอร์สนับครั้ง: กด "เข้าเรียน" ตัด 1 ครั้ง · "ลา" และ "งดสอน" ไม่ตัดยอด"</i></li>
+        <li>แบบชั่วโมง: <i>"กด "เข้าเรียน" ตัด {q} ตามเวลาคลาส"</i></li>
+        <li>แบบมูลค่า: <i>"กด "เข้าเรียน" แล้วใส่มูลค่าบริการครั้งนี้"</i> → ปุ่มเข้าเรียนเปิดฟอร์ม LIFF "บันทึกการใช้บริการ" ใส่มูลค่าครั้งก่อนไว้ให้แก้ได้ → ปุ่ม "บันทึกการใช้และตัดยอด" / "ยังไม่ตัด"</li>
+      </ul>
+      <h4>ข้อความตอบ</h4>
+      <ul>
+        <li>เข้าเรียน → "ตัดยอดแล้ว · {คอร์ส} · เข้าเรียน {วันที่} · ใช้ {q} · คงเหลือ {after}"</li>
+        <li>ลา → "บันทึกว่าลาแล้ว · ไม่ได้ตัดยอด · คงเหลือ {after}" · งดสอน → "บันทึกว่างดสอนแล้ว · ไม่ได้ตัดยอด"</li>
+        <li>กดซ้ำปุ่มเดิม → "เลือกไว้แล้ว: {สถานะ} ไม่มีอะไรเปลี่ยน" · กดปุ่มอื่นหลังตอบแล้ว → บอกสถานะเดิม + ปุ่ม "แก้ในประวัติ"</li>
+        <li>ปุ่มจากข้อความเวอร์ชันเก่า (v2) → แสดงสถานะอย่างเดียว ไม่บันทึก</li>
+      </ul>
+      <h4>ข้อผิดพลาด (ทุกข้อบอกว่าเกิดอะไร + ทำอะไรต่อ + มีปุ่มทางแก้)</h4>
+      <ul>
+        <li>ยอดไม่พอ: "เหลือ {bal} แต่คลาสนี้ใช้ {q} · ยังไม่ได้บันทึกเข้าเรียน" ปุ่ม "บันทึกซื้อเพิ่ม"</li>
+        <li>คอร์สหมดอายุ · ยอดติดลบ · คอร์สไม่ได้ใช้งานอยู่ (ปุ่ม "นำกลับมาใช้") · บัญชีถูกระงับ · คอร์สมูลค่าต้องใส่มูลค่าก่อน</li>
+        <li>กดเร็วเกิน: "ยังไม่ถึงเวลาบันทึกเข้าเรียน กดได้ตั้งแต่ 24 ชั่วโมงก่อนเริ่มคลาส"</li>
+        <li>ข้อความเก่า: "ข้อความนี้เก่าแล้ว: คลาสนี้ถูกเปลี่ยนเป็น "{สถานะ}" ไปก่อนหน้านี้" · "คลาสนี้ถูกยกเลิกจากตารางแล้ว ไม่ได้ตัดยอด"</li>
+      </ul>
+      <h4>รายการรอยืนยัน</h4>
+      <p>"รอยืนยัน {n} คลาส" แต่ละแถว "{คอร์ส} · {วันที่} {เวลา}" · ว่าง = "ไม่มีคลาสที่รอยืนยัน"</p>
+      <h4>โควตาและการหยุดส่ง</h4>
+      <ul>
+        <li>Free = 0 ข้อความ · Pro ≤ 100 · Max ≤ 300 ต่อเดือน · ไม่สะสมข้ามเดือน</li>
+        <li>ครบโควตา → "รอบนี้ข้อความเตือนครบ {used}/{limit} แล้ว จะไม่มีเตือนก่อนคลาสจนกว่าโควตาจะเริ่มรอบใหม่ · คุณยังกด "ตัดคอร์ส" เองได้ตามปกติ ยอดและประวัติไม่กระทบ"</li>
+        <li>โควตาข้อความของ OA ทั้งเดือนใช้ไปถึง 80% → ระบบหยุดส่งเตือนชั่วคราว (ข้อความ "ตอนนี้ระบบหยุดส่งข้อความเตือนชั่วคราว")</li>
+        <li>ทุกข้อความที่ส่งจริงบันทึกผลจาก LINE API (request id · เวลา · สถานะ · error)</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- 4.5 -->
+  <h3>4.5 ข้อความเตือนก่อนคอร์สหมดอายุ <span class="tag t-plan">วางแผน · P5b</span></h3>
+  <div class="grid g2">
+    <div>
+      <ul>
+        <li>ส่ง <b>ล่วงหน้า 14 วัน และ 3 วัน</b> ก่อนวันหมดอายุ (เวลาไทย) เฉพาะคอร์สที่ใช้อยู่ ยังมียอด และไม่ได้เก็บเข้าคลัง</li>
+        <li><b>เฉพาะ Pro / Max</b> (และบัญชีที่ได้สิทธิ์โดยไม่คิดเงิน ถ้า Mr.Foxx ตัดสินตามข้อเสนอ) · <b>Free ไม่ได้รับ push ใดๆ</b> แต่เห็นแถบเตือนในแอป</li>
+        <li>ไม่นับโควตาเตือนก่อนคลาส · ปิดได้ที่หน้าบัญชี · ไม่ส่งย้อนหลัง</li>
+        <li><b>ห้ามมีคำชวนอัปเกรด/ซื้อเพิ่ม/ต่ออายุ</b> ในข้อความนี้ (law: ไม่งั้นกลายเป็นข้อความการตลาดที่ฐานสัญญาไม่ครอบ)</li>
+        <li>จะเปิดใช้จริงเมื่อ P5c-1 และ P5c-2 รวมแล้ว และทดสอบบนมือถือจริงผ่าน LIFF แล้ว</li>
+      </ul>
+    </div>
+    <div class="mocks" style="margin:0">
+      <div>
+        <div class="phone"><div class="bar"><span>9:00</span><span>LINE</span></div>
+          <div class="scr chat" style="min-height:330px">
+            <div class="chathead"><span class="av">ตค</span>ตัดคอร์ส</div>
+            <div class="msgs">
+              <div class="flex"><div class="fx-h">คอร์สนี้จะหมดอายุในอีก 14 วัน</div><div class="fx-b"><b>นวดหน้า</b><div class="mut">หมดอายุวันที่ 25 พ.ย. 2026</div><div class="big">คงเหลือ 2 ครั้ง</div><span class="fx-btn">ดูคอร์ส</span><span class="fx-btn p">ตัดคอร์ส</span><div class="mut" style="margin-top:4px">เตือนก่อนหมดอายุ 14 วัน และ 3 วัน · ปิดได้ที่หน้าบัญชี</div></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="mockcap">push เตือนหมดอายุ (Pro/Max)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4.6 -->
+  <h3>4.6 Flow C — ฟอร์มเพิ่มคอร์ส <span class="tag t-plan">วางแผน · P4c-UI · ต้องเสร็จก่อนย้ายระบบ</span></h3>
+  <p>ฟอร์มเดียวใน LIFF เปิดได้จาก rich menu โดยไม่ต้องเลือกลูกก่อน · ขั้นแรกให้เลือก <b>"คอร์สใหม่"</b> หรือ <b>"บันทึกซื้อเพิ่มคอร์สเดิม"</b> (ถ้าซื้อแพ็กเดิมเพิ่มกับร้าน ยอดจะรวมในคอร์สเดิม)</p>
+  <div class="grid g2">
+    <div class="mocks" style="margin:0">
+      <div>
+        <div class="phone"><div class="bar"><span>9:41</span><span>LIFF</span></div>
+          <div class="scr">
+            <div class="appbar"><svg width="18" height="18" aria-hidden="true"><use href="#i-back"/></svg>เพิ่มคอร์ส</div>
+            <div class="liffbody">
+              <div class="lbl">คอร์สนี้นับเป็นแบบไหน?</div>
+              <div class="seg"><span>นับเป็นครั้ง</span><span class="on">นับเป็นชั่วโมง</span><span>นับเป็นมูลค่าบริการ</span></div>
+              <div class="hint">เช่น เปียโน 20 ชั่วโมง · ตัดทีละ 1 / 1.5 / 2 ชม. ได้</div>
+              <div class="lbl">ชื่อคอร์ส</div><div class="inp">เช่น นวดหน้า</div>
+              <div class="hint">ชื่อนี้จะขึ้นในข้อความเตือนบนมือถือ · อย่าใส่ข้อมูลสุขภาพ</div>
+              <div class="lbl">ใช้กับใคร (ไม่บังคับ)</div><div class="inp">เช่น ลูกคนที่ 1</div>
+              <div class="lbl">ยอดตั้งต้น (ชั่วโมง)</div><div class="inp">20</div>
+              <div class="hint">ถ้าใช้ไปบ้างแล้ว ใส่ที่เหลือ ณ วันนี้</div>
+              <div class="lbl">หมดอายุวันที่ (ไม่บังคับ)</div><div class="inp">31/01/2027 · หรือ ไม่มีวันหมดอายุ</div>
+              <div class="lbl">ตั้งตารางเรียนประจำ ▸</div>
+              <span class="btn">บันทึกคอร์ส</span>
+            </div>
+          </div>
+        </div>
+        <div class="mockcap">ฟอร์มเพิ่มคอร์ส (ย่อ) · ใช้ช่องวันหมดอายุชุดเดียวกับ P5c-1</div>
+      </div>
+    </div>
+    <div>
+      <h4 style="margin-top:0">ช่องในฟอร์ม</h4>
+      <ul>
+        <li><b>ชนิด:</b> นับเป็นครั้ง · นับเป็นชั่วโมง · นับเป็นมูลค่าบริการ</li>
+        <li><b>ชื่อคอร์ส</b> (เช่น "เปียโน (ครูมะลิ)") · <b>ใช้กับใคร</b> (ไม่บังคับ · Mr.Foxx ตัดสินให้ไม่บังคับจริง) · <b>ร้าน/ครู</b> (ไม่บังคับ · ไม่ต้องใส่เบอร์หรือ LINE ของครู)</li>
+        <li><b>ยอดตั้งต้น:</b> ครั้ง / ชั่วโมง (ทศนิยมได้ เช่น 7.5) / มูลค่าบริการที่ร้านให้ (บาท)</li>
+        <li><b>VALUE เพิ่ม:</b> "เงินที่คุณจ่ายร้าน" (ไม่บังคับ) → แสดง "ส่วนที่ร้านให้เพิ่ม {bonus} บาท (มูลค่าบริการ − เงินที่จ่าย)"</li>
+        <li><b>วันที่ซื้อ · หมายเหตุ · หมดอายุวันที่</b> (ไม่บังคับ · แก้ทีหลังได้ถ้าร้านขยายเวลาให้)</li>
+        <li><b>ตารางเรียนประจำ</b> (ไม่บังคับ): วัน · เวลาเริ่ม · เรียนนานเท่าไร (ถ้าเป็นคอร์สชั่วโมง ค่านี้คือจำนวนที่ตัดทุกครั้งที่กด "เข้าเรียน") · "เพิ่มอีกวัน"</li>
+        <li><b>เตือนก่อนคลาส</b> (Pro/Max): 15 นาที · 1 ชั่วโมง · 1 วัน · ไม่ต้องเตือน · Free เห็นแต่กดไม่ได้ พร้อมข้อความ "แผน Free ดูและบันทึกตารางได้ แต่ยังไม่มีข้อความเตือนก่อนคลาส"</li>
+      </ul>
+      <p>บันทึก → "เพิ่มคอร์สแล้ว · {คอร์ส} · {ยอด}" ปุ่ม <span class="q">ไปตัดคอร์ส</span> / <span class="q">ตั้งตารางเรียน</span> · บันทึกไม่สำเร็จ → "บันทึกไม่สำเร็จ ลองใหม่อีกครั้ง ข้อมูลที่กรอกยังอยู่" · คอร์สเต็มโควตา → ข้อความเต็มแผน (หัวข้อ 4.11)</p>
+      <p class="stat-l">เบื้องหลัง: สร้างคอร์ส + ยอดตั้งต้น + ตารางทั้งหมดใน transaction เดียว (พลาดช่องไหน = ยกเลิกทั้งก้อน) · กดบันทึกซ้ำได้คอร์สเดียว · ต้องมี migration 0037 เพราะตอนนี้ฐานข้อมูลบังคับให้ทุกคอร์สมีวัน/เวลาเรียน</p>
+    </div>
+  </div>
+  <details>
+    <summary>บันทึกซื้อเพิ่ม (บวกยอดเข้าคอร์สเดิม)</summary>
+    <div class="body">
+      <ul>
+        <li>ถาม <i>"ซื้อเพิ่มกับร้านกี่{ครั้ง/ชั่วโมง}?"</i> · แบบมูลค่า <i>"ซื้อเพิ่มกับร้านได้มูลค่าบริการเท่าไร (บาท)?"</i> + เงินที่จ่ายร้าน (ไม่บังคับ)</li>
+        <li>ยืนยัน: <i>"บันทึกซื้อเพิ่ม {q} ในคอร์ส {course} · ก่อน: {before} → หลัง: {after}"</i> ปุ่ม "ยืนยันบันทึก" / "ยกเลิก"</li>
+        <li>สำเร็จ: <i>"บันทึกซื้อเพิ่มแล้ว คงเหลือ {after}"</i> · คอร์สที่ติดลบอยู่จะบอกว่าหลังบันทึกยอดจะเป็นเท่าไร</li>
+        <li>ห้ามใช้คำ "เติมเงิน / top-up" กับคอร์สมูลค่า (แบบครั้ง/ชั่วโมงใช้ "เพิ่มชั่วโมง/เพิ่มครั้ง" ได้)</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- 4.7 -->
+  <h3>4.7 หน้าตัดคอร์สใน LIFF <span class="tag t-plan">วางแผน · P5c-1</span></h3>
+  <p>หน้าเดียวใช้ได้ 2 ทาง: ปลายทางของปุ่ม "กรอกมูลค่า" ในแชท (คอร์สมูลค่า) และเป็นหน้า "ตัดคอร์ส" ทั่วไปในแอป · ลำดับ: <b>กรอกจำนวน → ดูก่อน → หลัง (จากเซิร์ฟเวอร์) → ยืนยันตัด → สำเร็จ</b> · 1 idempotency key ต่อการเปิดหน้า 1 ครั้ง · <b>เลย์เอาต์ยังไม่ตัดสิน</b> ให้ dev เลือก ถ้อยคำรองรับทั้งสองแบบ</p>
+  <div class="mocks">
+    <div>
+      <div class="phone"><div class="bar"><span>9:41</span><span>LIFF</span></div>
+        <div class="scr">
+          <div class="appbar"><svg width="18" height="18" aria-hidden="true"><use href="#i-back"/></svg>ตัดคอร์ส</div>
+          <div class="liffbody">
+            <b>ร้านทำผม</b>
+            <div class="lbl">มูลค่าบริการที่ใช้ (บาท)</div><div class="inp" style="color:var(--ink)">3,500</div>
+            <div class="hint">ใส่ตามที่ร้านคิดจริงครั้งนี้ เช่น ทำผม 3,500 บาท · เราบันทึกการใช้บริการตามตัวเลขที่คุณกรอก</div>
+            <span class="btn s">ดูยอดหลังตัด</span>
+            <div class="hint">ยังไม่ได้ตัดยอด จนกว่าจะกด "ยืนยันตัด"</div>
+            <div style="border-top:1px dashed var(--border);margin:4px 0"></div>
+            <div class="ba"><div><div class="hint">ก่อนตัด (ตามที่คุณบันทึก)</div><b>70,000</b></div><span>→</span><div style="text-align:right"><div class="hint">หลังตัด (ตามที่คุณบันทึก)</div><div class="big">66,500</div></div></div>
+            <div class="hint">ยอดนี้เป็นบันทึกส่วนตัวที่คุณกรอกเอง เราไม่ได้รับ ถือ หรือโอนเงินหรือเครดิต … <span style="color:var(--primary)">อ่านเงื่อนไขฉบับเต็ม</span></div>
+            <span class="btn">ยืนยันตัด</span>
+            <span class="btn s">ยกเลิก</span>
+            <div style="text-align:center;font-size:12px;color:var(--primary);font-weight:700">กลับไปที่แชท</div>
+          </div>
+        </div>
+      </div>
+      <div class="mockcap">เลย์เอาต์ A: สองขั้น · ยกเลิก = กลับขั้นกรอกจำนวน + "ยกเลิกแล้ว ยังไม่ได้ตัดยอด"</div>
+    </div>
+    <div>
+      <div class="phone"><div class="bar"><span>9:41</span><span>LIFF</span></div>
+        <div class="scr">
+          <div class="appbar"><svg width="18" height="18" aria-hidden="true"><use href="#i-back"/></svg>ตัดคอร์ส</div>
+          <div class="liffbody">
+            <b>เปียโน (ครูมะลิ)</b>
+            <div class="lbl">ใช้กี่ชั่วโมง</div><div class="inp" style="color:var(--ink)">1.5</div>
+            <div class="hint">ใส่ทศนิยมได้ เช่น 1 หรือ 1.5</div>
+            <div class="ba"><div><div class="hint">ก่อนตัด</div><b>20 ชม.</b></div><span>→</span><div style="text-align:right"><div class="hint">หลังตัด</div><div class="big">18.5 ชม.</div></div></div>
+            <div class="hint">ยังไม่ได้ตัดยอด จนกว่าจะกด "ยืนยันตัด"</div>
+            <span class="btn">ยืนยันตัด</span>
+            <div style="text-align:center;font-size:12px;color:var(--primary);font-weight:700">กลับหน้าคอร์ส</div>
+            <div style="text-align:center;font-size:12px;color:var(--primary);font-weight:700">กลับไปที่แชท</div>
+            <div class="wbar" style="background:var(--danger-soft);color:var(--danger)"><svg width="14" height="14" aria-hidden="true"><use href="#i-alert"/></svg><span>ยังไม่ได้ตัดยอดรายการนี้ เพราะคอร์สมีการเปลี่ยนแปลงหลังคุณเปิดหน้านี้ · <b style="color:var(--danger)">โหลดหน้านี้ใหม่</b></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="mockcap">เลย์เอาต์ B: หน้าเดียว พรีวิวขึ้นเอง ไม่มีปุ่มยกเลิก (ออกจากหน้า = ไม่ตัด) · ล่างสุดคือตัวอย่างข้อความเมื่อข้อมูลเปลี่ยน</div>
+    </div>
+  </div>
+  <details>
+    <summary>กติกาของหน้าตัดคอร์ส (ยกเลิก · ออก · ข้อมูลเปลี่ยน · กลับไปที่แชท)</summary>
+    <div class="body">
+      <ul>
+        <li>ไม่มีรายการเกิดในบัญชีจนกว่าจะกด "ยืนยันตัด" และเซิร์ฟเวอร์ตอบสำเร็จ · <b>ออกจากหน้าก่อนยืนยัน = ไม่ตัดยอด</b></li>
+        <li>หลังกด "ยืนยันตัด" (ขึ้น "กำลังตัดยอด...") ยกเลิกไม่ได้ · กดซ้ำ = "รายการนี้ตัดยอดไปแล้ว ไม่ได้ตัดซ้ำ"</li>
+        <li><b>เลย์เอาต์ A</b> (สองขั้น): ที่ขั้นก่อน/หลังกด "ยกเลิก" → กลับขั้นกรอก (ค่าที่กรอกยังอยู่) + "ยกเลิกแล้ว ยังไม่ได้ตัดยอด"</li>
+        <li><b>เลย์เอาต์ B</b> (หน้าเดียว): พรีวิวอัตโนมัติ → ไม่มีปุ่ม "ยกเลิก" · ถ้ามีปุ่ม "ดูยอดหลังตัด" ให้ผู้ใช้กดเอง จึงมี "ยกเลิก" ข้างปุ่มยืนยัน</li>
+        <li><b>"กลับหน้าคอร์ส"</b> ไปหน้าคอร์สในแอป · <b>"กลับไปที่แชท"</b> ปิดหน้าต่าง LIFF แสดงเฉพาะเมื่อเปิดอยู่ในแอป LINE (ซ่อนเมื่อเปิดจากเบราว์เซอร์ภายนอก)</li>
+        <li><b>ข้อมูลเปลี่ยนระหว่างเปิดหน้า</b> (stale) → "ยังไม่ได้ตัดยอดรายการนี้ เพราะคอร์สมีการเปลี่ยนแปลงหลังคุณเปิดหน้านี้ · โหลดหน้าใหม่เพื่อดูยอดล่าสุดแล้วลองอีกครั้ง" ปุ่ม "โหลดหน้านี้ใหม่"</li>
+        <li>ตรวจกรอก: ว่าง "ใส่จำนวนก่อนนะ" · ครั้ง "ใส่จำนวนครั้งเป็นเลขจำนวนเต็ม 1 ขึ้นไป" · ชั่วโมง "ใส่ชั่วโมงเป็นตัวเลขมากกว่า 0 เช่น 1 หรือ 1.5" · มูลค่า "ใส่เป็นตัวเลขมากกว่า 0 (ทศนิยมได้ไม่เกิน 2 ตำแหน่ง)"</li>
+        <li>หน้านี้ต้องตรวจวันหมดอายุและสถานะคอร์สก่อนแสดงพรีวิว (law ชี้ว่าฟังก์ชันพรีวิวเดิมไม่ตรวจ) · คอร์สหมดอายุ/ยอดไม่พอ/อยู่ในคลัง/หยุดไว้ → ข้อความผิดพลาด ไม่มีรายการเกิด</li>
+        <li>แบบมูลค่า: ข้อความชี้แจงแบบสั้นต้องแสดงเต็มทุกคำใต้ก่อน → หลัง และคงไว้ในหน้าสำเร็จ</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- 4.8 -->
+  <h3>4.8 หน้าคอร์สของฉัน + ป้ายวันหมดอายุ <span class="tag t-plan">วางแผน · P5c-1</span></h3>
+  <div class="grid g2">
+    <div class="mocks" style="margin:0">
+      <div>
+        <div class="phone"><div class="bar"><span>9:41</span><span>LIFF</span></div>
+          <div class="scr">
+            <div class="appbar">คอร์สของฉัน</div>
+            <div class="liffbody">
+              <div class="tabs"><span class="on">ใช้อยู่</span><span>คลัง</span></div>
+              <div class="wbar"><svg width="14" height="14" aria-hidden="true"><use href="#i-hour"/></svg><span><b>2 คอร์สใกล้หมดอายุ</b><br>ใกล้สุด: นวดหน้า · หมดอายุ 14 พ.ย. 2026</span></div>
+              <div class="cc"><div class="row"><span class="nm">ร้านทำผม</span><span class="bdg b-exp"><svg aria-hidden="true"><use href="#i-x"/></svg>หมดอายุแล้ว</span></div><div class="bal">12,000 บาท</div><div class="who">คงเหลือตามที่คุณบันทึก</div></div>
+              <div class="cc"><div class="row"><span class="nm">นวดหน้า</span><span class="bdg b-soon"><svg aria-hidden="true"><use href="#i-hour"/></svg>อีก 3 วัน</span></div><div class="bal">2 ครั้ง</div><div class="usage"><i style="width:80%"></i></div><div class="who">ใช้ไป 8 / 10 ครั้ง</div></div>
+              <div class="cc"><div class="row"><span class="nm">เปียโน (ครูมะลิ)</span><span class="bdg b-ok"><svg aria-hidden="true"><use href="#i-check"/></svg>ยังไม่หมดอายุ</span></div><div class="bal">18.5 ชม.</div><div class="who">สำหรับ ลูกคนที่ 1</div></div>
+              <div class="cc"><div class="row"><span class="nm">ล้างรถ</span><span class="bdg b-none">ไม่มีวันหมดอายุ</span></div><div class="bal">6 ครั้ง</div></div>
+              <div style="text-align:center;font-size:12px;color:var(--primary);font-weight:700">จัดการคอร์ส</div>
+            </div>
+            <div class="bnav"><div class="on"><svg aria-hidden="true"><use href="#i-home"/></svg>คอร์ส</div><div><svg aria-hidden="true"><use href="#i-list"/></svg>ประวัติ</div><div><svg aria-hidden="true"><use href="#i-user"/></svg>บัญชี</div></div>
+          </div>
+        </div>
+        <div class="mockcap">หน้าแรกของแอป (แท็บ "คอร์ส") · เรียงคอร์สหมดอายุที่ยังมียอดขึ้นก่อน แล้วตามวันใกล้สุด</div>
+      </div>
+    </div>
+    <div>
+      <h4 style="margin-top:0">ป้ายวันหมดอายุ (ExpiryBadge)</h4>
+      <div class="tbl"><table style="min-width:0">
+        <thead><tr><th>สถานะ</th><th>ป้าย</th><th>เมื่อไร</th></tr></thead>
+        <tbody>
+          <tr><td>ok</td><td><span class="bdg b-ok"><svg aria-hidden="true"><use href="#i-check"/></svg>ยังไม่หมดอายุ</span></td><td>เหลือมากกว่า 14 วัน</td></tr>
+          <tr><td>soon</td><td><span class="bdg b-soon"><svg aria-hidden="true"><use href="#i-hour"/></svg>อีก {n} วัน</span></td><td>1–14 วัน</td></tr>
+          <tr><td>today</td><td><span class="bdg b-soon"><svg aria-hidden="true"><use href="#i-hour"/></svg>หมดอายุวันนี้</span></td><td>ใต้ป้าย "ยังตัดคอร์สได้ถึงสิ้นวันนี้"</td></tr>
+          <tr><td>expired</td><td><span class="bdg b-exp"><svg aria-hidden="true"><use href="#i-x"/></svg>หมดอายุแล้ว</span></td><td>เลยวันหมดอายุ · ตัดไม่ได้</td></tr>
+          <tr><td>none</td><td><span class="bdg b-none">ไม่มีวันหมดอายุ</span></td><td>ไม่ได้ใส่วัน · ไม่มีไอคอนสถานะ</td></tr>
+        </tbody>
+      </table></div>
+      <ul>
+        <li>ป้ายต้องมี <b>ข้อความ + ไอคอน</b> เสมอ ไม่พึ่งสีอย่างเดียว · <b>ไม่มีคำชวนต่ออายุ/ซื้อเพิ่ม</b> ในป้ายหรือแถบ</li>
+        <li><b>แถบเตือน (ทุกแผนรวม Free · ในแอปเท่านั้น):</b> "{n} คอร์สใกล้หมดอายุ · ใกล้สุด: {คอร์ส} · หมดอายุ {วันที่}" ขึ้นเมื่อมีคอร์สที่ใช้อยู่และยังไม่หมดอายุเหลือ 0–14 วันอย่างน้อย 1 คอร์ส · แตะแล้วเลื่อนไปคอร์สที่ใกล้สุด</li>
+        <li>ป้ายเดียวกันใช้ที่หน้าคอร์สของฉัน · หน้าจัดการคอร์ส · หน้าคอร์สแต่ละคอร์ส (มีส่วน "วันหมดอายุ" + ปุ่ม "บันทึกวันหมดอายุ")</li>
+        <li>บนการ์ด: ปุ่ม "ดูประวัติ" · "แก้ไข" · "เก็บเข้าคลัง" · แท็บ "คลัง" มีปุ่ม "นำกลับมาใช้"</li>
+        <li class="stat-l">หน้าแรกจริงใน trunk ตอนนี้ยังเป็นการ์ดยอดชั่วโมงแบบ v2 (ชั่วโมงเหลือ / เรียนได้อีกกี่ครั้ง) ที่เปลี่ยนสีเป็น Calm Indigo แล้ว · การ์ดแบบ 3 ชนิด + ป้ายวันหมดอายุ = งาน P5c-1</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 4.9 -->
+  <h3>4.9 ประวัติ + แก้รายการ</h3>
+  <div class="grid g2">
+    <div class="mocks" style="margin:0">
+      <div>
+        <div class="phone"><div class="bar"><span>9:41</span><span>LIFF</span></div>
+          <div class="scr">
+            <div class="appbar">ประวัติ</div>
+            <div class="liffbody">
+              <div class="tabs"><span class="on">ทุกคอร์ส</span><span>เปียโน</span><span>นวดหน้า</span></div>
+              <div class="hrow"><div class="t"><b>ตัดยอด · เปียโน</b><span>−1.5 ชม.</span></div><div class="tagline">15 พ.ย. 10:05 · คงเหลือ 17 ชม.</div></div>
+              <div class="hrow"><div class="t"><b>ลา · เปียโน</b><span>0</span></div><div class="tagline">8 พ.ย. · ไม่ได้ตัดยอด</div></div>
+              <div class="hrow"><div class="t"><b>แก้รายการ · นวดหน้า</b><span>+1 ครั้ง</span></div><div class="tagline">เหตุผล: กดผิดคอร์ส</div></div>
+              <div class="hrow"><div class="t"><span class="strike">ตัดยอด · นวดหน้า</span><span class="bdg b-none">แก้แล้ว</span></div><div class="tagline">7 พ.ย. · −1 ครั้ง</div></div>
+              <div class="hrow"><div class="t"><b>ซื้อเพิ่ม · นวดหน้า</b><span>+10 ครั้ง</span></div><div class="tagline">1 พ.ย. <span style="float:right;color:var(--primary);font-weight:700">แก้รายการ</span></div></div>
+              <div style="text-align:center;font-size:12px;color:var(--primary);font-weight:700">ดูเพิ่ม</div>
+            </div>
+            <div class="bnav"><div><svg aria-hidden="true"><use href="#i-home"/></svg>คอร์ส</div><div class="on"><svg aria-hidden="true"><use href="#i-list"/></svg>ประวัติ</div><div><svg aria-hidden="true"><use href="#i-user"/></svg>บัญชี</div></div>
+          </div>
+        </div>
+        <div class="mockcap">ประวัติ: ประเภท ตัดยอด · ซื้อเพิ่ม · ลา · งดสอน · แก้รายการ</div>
+      </div>
+    </div>
+    <div>
+      <h4 style="margin-top:0">ขั้นตอนแก้รายการ</h4>
+      <ol class="steps">
+        <li>ในประวัติกด <span class="q">แก้รายการ</span> ที่รายการนั้น → เห็น "รายการเดิม: {entry}"</li>
+        <li>ใส่ "เหตุผลที่แก้ (จำเป็น)" เช่น กดผิดคอร์ส (อย่าใส่ข้อมูลสุขภาพ)</li>
+        <li>ยืนยัน: "ยกเลิกรายการนี้ คงเหลือจะเป็น {after} · รายการเดิมยังอยู่ในประวัติ ขึ้นป้าย "แก้แล้ว"" (ถ้าเป็นคลาส: "คลาสนี้จะกลับไปอยู่ในรายการรอยืนยัน เลือกใหม่ได้")</li>
+        <li>สำเร็จ: "แก้รายการแล้ว คงเหลือ {after}" · แก้ซ้ำ = "รายการนี้แก้ไปแล้ว ไม่ได้แก้ซ้ำ" · ยอดจะติดลบ = "แก้รายการนี้ไม่ได้ เพราะยอดจะติดลบ"</li>
+      </ol>
+      <p class="stat-l">ข้อความ "ตัดยอดแล้วยังแก้รายการได้ในประวัติ" บนหน้ายืนยันของ Flow A ปล่อยได้ก็ต่อเมื่อปุ่มแก้รายการใช้งานได้จริงแล้ว (กฎของ law/zoro: copy ห้ามสัญญาสิ่งที่โค้ดยังไม่ทำ) · ประวัติว่าง: "ยังไม่มีประวัติ รายการจะมาอยู่ที่นี่หลังตัดยอดครั้งแรก"</p>
+      <h4>แก้ไขคอร์ส</h4>
+      <p>"แก้ไขคอร์ส" → "บันทึกการแก้ไข" · การแก้ไขถูกบันทึกในประวัติ · ยอดคงเหลือเปลี่ยนผ่าน "บันทึกซื้อเพิ่ม" หรือ "แก้รายการ" เท่านั้น (แก้ตัวเลขยอดตรงๆ ไม่ได้)</p>
+    </div>
+  </div>
+
+  <!-- 4.10 -->
+  <h3>4.10 หน้าบัญชี <span class="tag t-review">บางส่วน · สวิตช์ = P5c-2</span></h3>
+  <div class="grid g2">
+    <div class="mocks" style="margin:0">
+      <div>
+        <div class="phone"><div class="bar"><span>9:41</span><span>LIFF</span></div>
+          <div class="scr">
+            <div class="appbar">บัญชี</div>
+            <div class="liffbody">
+              <div class="cc"><div class="lbl" style="margin:0">แผนของคุณ</div><div class="bal" style="font-size:18px">แผนปัจจุบัน: Free</div><div class="who">คอร์สที่ใช้อยู่ 4 / 5 คอร์ส</div><span class="btn s" style="margin-top:6px">แผน Pro/Max (ยังไม่เปิด)</span></div>
+              <div class="srow dis"><div><b>รับข้อความเตือนก่อนคลาส</b><div class="hint">เปิดไว้เพื่อให้เราส่งข้อความเตือนก่อนคลาสตามที่คุณตั้งไว้</div></div><span class="sw off"></span></div>
+              <div class="srow dis"><div><b>รับข้อความเตือนก่อนคอร์สหมดอายุ</b><div class="hint">ล่วงหน้า 14 วัน และ 3 วัน</div></div><span class="sw off"></span></div>
+              <div class="wbar" style="background:var(--primary-soft);color:var(--ink)"><svg width="14" height="14" style="color:var(--primary)" aria-hidden="true"><use href="#i-info"/></svg><span>แผน Free ไม่มีข้อความเตือนก่อนคลาสและก่อนคอร์สหมดอายุทาง LINE ยังตัดคอร์สเองได้ตามปกติ</span></div>
+              <div class="srow"><div><b>เวลาเตือนก่อนคลาส</b><div class="hint">15 นาที · 1 ชั่วโมง · 1 วัน</div></div><span class="hint">Pro/Max</span></div>
+              <div style="font-size:12px;color:var(--danger);font-weight:700;text-align:center">ขอลบบัญชี</div>
+            </div>
+            <div class="bnav"><div><svg aria-hidden="true"><use href="#i-home"/></svg>คอร์ส</div><div><svg aria-hidden="true"><use href="#i-list"/></svg>ประวัติ</div><div class="on"><svg aria-hidden="true"><use href="#i-user"/></svg>บัญชี</div></div>
+          </div>
+        </div>
+        <div class="mockcap">มุมมองผู้ใช้ Free: สวิตช์เตือนปิดและกดไม่ได้ + ข้อความอธิบายครั้งเดียวใต้สวิตช์ทั้งสอง</div>
+      </div>
+    </div>
+    <div>
+      <ul>
+        <li>แท็บที่ 3 ชื่อ <b>"บัญชี"</b> ไอคอนรูปคน (Mr.Foxx ตัดสิน 11 พ.ย.) ตรงกับชื่อปุ่มใน rich menu และคำว่า "หน้าบัญชี" ในเอกสารกฎหมาย · แท็บนี้ active ทั้งหน้า settings และหน้าแผน</li>
+        <li><b>สวิตช์ 1 "รับข้อความเตือนก่อนคลาส"</b> · ปิดแล้วไม่มีเตือนก่อนคลาส แต่ยังตัดคอร์สเองได้ตามปกติ</li>
+        <li><b>สวิตช์ 2 "รับข้อความเตือนก่อนคอร์สหมดอายุ"</b> · ปิดแล้วดูวันหมดอายุได้ที่หน้าคอร์ส</li>
+        <li><b>บัญชีที่ไม่มีสิทธิ์เตือน (Free)</b>: ทั้งสองสวิตช์แสดงแต่ปิดและกดไม่ได้ · ตัดสินจาก "สิทธิ์เตือน = 0" ไม่ใช่จากชื่อแผน (เผื่อบัญชีที่ได้สิทธิ์โดยไม่คิดเงิน) · ระบบไม่เขียนค่า "ปิด" ทับลงฐานข้อมูล</li>
+        <li><b>เวลาเตือนก่อนคลาส</b> 15 นาที / 1 ชั่วโมง / 1 วัน · ค่าเดิมที่อยู่นอกรายการยังแสดงและเลือกไว้ · แก้ได้เฉพาะเจ้าของบัญชี</li>
+        <li><b>ตารางแผน</b> (ดูหัวข้อ 6) · โควตาข้อความเตือนเริ่มรอบใหม่: {วันที่} · ก่อนเปิดรับชำระ ปุ่มเป็น "แผน Pro/Max (ยังไม่เปิด)" ห้ามมีปุ่มสมัครหรือจ่าย</li>
+        <li>ขอลบบัญชี / ส่งออกข้อมูล ตามข้อกำหนดข้อ 9</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 4.11 -->
+  <h3>4.11 ข้อผิดพลาดและกรณีขอบ</h3>
+  <p class="sub">หลัก: บอกว่าเกิดอะไร + ทำอะไรต่อได้ + มีปุ่มทางแก้ในข้อความเดียวกัน ไม่อ้างชื่อเมนูลอยๆ ไม่โทษผู้ใช้</p>
+  <div class="tbl"><table>
+    <thead><tr><th>กรณี</th><th>ข้อความที่ผู้ใช้เห็น</th><th>ปุ่ม</th></tr></thead>
+    <tbody>
+      <tr><td>ยังไม่สมัคร กดตัดคอร์ส</td><td>คุณยังไม่ได้สมัครใช้งาน · เปิดแอปเพื่อสมัครด้วย LINE ก่อน แล้วค่อยกลับมาตัดคอร์ส</td><td>เปิดแอป</td></tr>
+      <tr><td>ไม่ใช่เจ้าของบัญชี (สมาชิกคนที่ 2 ของครัวเรือน v2 เดิม)</td><td>ระบบไม่ให้ตัดยอดหรือตอบคลาส · ตรวจเจ้าของบัญชีก่อนอ่านข้อมูลใดๆ (jinbe ปิดช่องนี้ใน P4b-F และ P5a)</td><td>–</td></tr>
+      <tr><td>คอร์สหมดอายุ</td><td>คอร์ส {course} หมดอายุเมื่อ {date} จึงยังตัดไม่ได้ · ถ้าร้านขยายเวลาให้ แก้วันหมดอายุแล้วกลับมาตัดได้</td><td>แก้วันหมดอายุ</td></tr>
+      <tr><td>ยอดไม่พอ</td><td>ยอดไม่พอ: เหลือ {bal} ชม. แต่จะตัด {q} ชม. · ลดจำนวนที่ตัด หรือบันทึกซื้อเพิ่มก่อน</td><td>ลดจำนวน · บันทึกซื้อเพิ่ม</td></tr>
+      <tr><td>ยอดติดลบจากระบบเดิม</td><td>คอร์สนี้ยอดติดลบ {neg} จึงยังตัดไม่ได้ · บันทึกซื้อเพิ่มให้ยอดพอก่อน แล้วค่อยตัด</td><td>บันทึกซื้อเพิ่ม</td></tr>
+      <tr><td>ข้อความ/ลิงก์หมดอายุ</td><td>ข้อความนี้หมดอายุแล้ว ยังไม่ได้ตัดยอด · กดเริ่มใหม่เพื่อเลือกคอร์สอีกครั้ง</td><td>เริ่มใหม่</td></tr>
+      <tr><td>คอร์สถูกแก้หลังส่งข้อความ</td><td>ข้อความนี้เก่าแล้ว: คอร์สนี้มีการตัดยอดหรือแก้ไขหลังส่งข้อความนี้ · ยังไม่ได้ตัดยอด</td><td>ดูยอดคงเหลือ</td></tr>
+      <tr><td>คอร์สอยู่ในคลัง</td><td>คอร์สนี้เก็บเข้าคลังไปแล้ว ไม่ได้ตัดยอด</td><td>ดูยอดคงเหลือ</td></tr>
+      <tr><td>Free ครบ 5 คอร์ส</td><td>คุณมีคอร์สที่ใช้อยู่ครบ 5 คอร์สตามแผน Free แล้ว · เก็บคอร์สที่ใช้หมดแล้วเข้าคลังเพื่อเปิดที่ว่าง หรืออัปเกรดเป็น Pro เพิ่มได้ถึง 20 คอร์ส (ก่อนเปิดรับชำระไม่พูดถึงการอัปเกรด)</td><td>เก็บเข้าคลัง · ดูแผน</td></tr>
+      <tr><td>กดรัวขณะกำลังทำรายการ</td><td>กำลังประมวลผลรายการก่อนหน้า รอสักครู่แล้วลองใหม่</td><td>–</td></tr>
+      <tr><td>ผิดพลาดทั่วไป</td><td>ทำรายการไม่สำเร็จ ยังไม่ได้ตัดยอด ลองใหม่อีกครั้ง</td><td>–</td></tr>
+      <tr><td>กดพร้อมกันสองเครื่อง / webhook ส่งซ้ำ</td><td>ตัดครั้งเดียว อีกเครื่องได้ "รายการนี้ตัดยอดไปแล้ว ไม่ได้ตัดซ้ำ"</td><td>–</td></tr>
+      <tr><td>คอร์สเดิมติดลบตอนย้ายระบบ</td><td>คอร์สเดิมบางรายการของคุณมียอดติดลบตามที่เคยบันทึก ระบบจะยังไม่ให้ตัดยอดเพิ่มจนกว่าคุณจะเพิ่มยอดให้พอ</td><td>–</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ===================================================== 5 -->
+<section id="ui">
+  <h2><span class="n">5</span>UI — ระบบดีไซน์</h2>
+  <p class="sub">North star: <b>"ตัดไว · ชัดเจน · เชื่อใจได้"</b> · positioning <b>"แตะปุ๊บ ตัดปั๊บ"</b> · ที่มา: PRODUCT.md + DESIGN.md (จาก impeccable init 10 พ.ย.) และ Lane X ที่รวมแล้ว</p>
+
+  <h3>สี: ครามสงบ (Calm Indigo) · ตั้งชื่อตามหน้าที่</h3>
+  <p>Mr.Foxx เลือกจากตัวอย่าง 4 แบบ (10 พ.ย.) โจทย์ "ทันสมัย เหมาะกับทุกคน ไม่ฉูดฉาด" · เลิกใช้พาเลตเดิม · ค่า HEX อยู่ที่เดียว (tokens.css / tokens.json มีเทสต์ยืนยันว่าตรงกัน) โค้ดอ้างด้วยชื่อหน้าที่เท่านั้น เปลี่ยน CI = แก้ที่เดียว (+ ทำภาพ rich menu ใหม่) · Flex ของ LINE ที่ต้องใช้ HEX ดึงจากโมดูลสีกลางตัวเดียวกัน</p>
+  <div class="grid g4">
+    <div class="swatch"><i style="background:#4352C4"></i><div><b>primary</b><span>#4352C4 · ปุ่มหลัก ลิงก์ แท็บที่เลือก</span></div></div>
+    <div class="swatch"><i style="background:#3542A6"></i><div><b>primary-hover</b><span>#3542A6 · ตอนกด</span></div></div>
+    <div class="swatch"><i style="background:#EEF0FB"></i><div><b>primary-soft</b><span>#EEF0FB · หัวการ์ด Flex · ปุ่มรอง</span></div></div>
+    <div class="swatch"><i style="background:#1E2433"></i><div><b>ink</b><span>#1E2433 · ตัวอักษรหลัก</span></div></div>
+    <div class="swatch"><i style="background:#5B6474"></i><div><b>muted</b><span>#5B6474 · ตัวรอง hint</span></div></div>
+    <div class="swatch"><i style="background:#F7F8FA"></i><div><b>bg</b><span>#F7F8FA · พื้นหน้า</span></div></div>
+    <div class="swatch"><i style="background:#FFFFFF"></i><div><b>surface</b><span>#FFFFFF · การ์ด เมนูล่าง</span></div></div>
+    <div class="swatch"><i style="background:#DDE1E8"></i><div><b>border</b><span>#DDE1E8 · ขอบการ์ด</span></div></div>
+    <div class="swatch"><i style="background:#E9ECF1"></i><div><b>track</b><span>#E9ECF1 · รางแถบ ปุ่มปิดใช้</span></div></div>
+    <div class="swatch"><i style="background:#1F7A4D"></i><div><b>success / -soft</b><span>#1F7A4D / #E8F5EE · ยังไม่หมดอายุ</span></div></div>
+    <div class="swatch"><i style="background:#8A5300"></i><div><b>warning / -soft</b><span>#8A5300 / #FFF4DD · ใกล้หมด</span></div></div>
+    <div class="swatch"><i style="background:#B42335"></i><div><b>danger / -soft</b><span>#B42335 / #FDECEE · หมดอายุ ผิดพลาด</span></div></div>
+  </div>
+  <div class="grid g2" style="margin-top:12px">
+    <div class="card">
+      <h4 style="margin-top:0">กฎที่ตั้งชื่อไว้</h4>
+      <ul>
+        <li><b>One Accent:</b> primary คือสีเดียวที่ "ชวนกด" ใช้ไม่เกินราว 10% ของจอ</li>
+        <li><b>Status-Only:</b> เขียว/เหลือง/แดง ใช้บอกสถานะเท่านั้น ห้ามตกแต่ง</li>
+        <li><b>Role-Name:</b> ห้าม HEX ตรงในคอมโพเนนต์</li>
+        <li><b>No-Pink:</b> ไม่ใช้ชมพู/บานเย็นของแอปที่เป็นแรงบันดาลใจ</li>
+        <li><b>Flat Card:</b> การ์ดไม่มีเงา ใช้ขอบ 1px · ห้ามการ์ดซ้อนการ์ด · เงามีที่เดียวคือแถบเมนูล่าง</li>
+        <li><b>Focus Ring:</b> โฟกัสคีย์บอร์ด = เส้น 3px สี primary ทุกจุดที่แตะได้</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">ตัวอักษร</h4>
+      <ul>
+        <li><b>Noto Sans Thai</b> ครอบครัวเดียวหลายน้ำหนัก (self-host ในแอป) · <b>เอา Nunito ออกแล้ว</b> (Lane X)</li>
+        <li><b>ยอด (Balance):</b> 800 · 28px · ตัวเลขกว้างเท่ากัน (tabular-nums) · ใหญ่สุดบนจอ อยู่เหนือชื่อเสมอ (Numbers-Lead)</li>
+        <li><b>หัวหน้า:</b> 700 · 20px · <b>เนื้อหา:</b> 400 · 16px (ต่ำสุด 16px กัน iOS ซูม) · <b>ป้าย:</b> 700 · 14px · <b>ป้ายเล็กสุด:</b> 600 · 13px</li>
+        <li><b>Thai Line:</b> line-height ≥ 1.6 · ไม่บีบระยะตัวอักษรไทย · ไม่ใช้ตัวพิมพ์ใหญ่ติดระยะเหนือหัวข้อ</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>เลย์เอาต์และการนำทาง</h3>
+  <ul>
+    <li>คอลัมน์เดียวกว้างสุด 480px กลางจอ (มือถือ = เต็มจอ) · ขอบข้าง 16px · ระยะระหว่างบล็อก 12px · ทดสอบที่กว้าง 360px ไม่มี scroll แนวนอน</li>
+    <li><b>AppBar</b> สูง ≥ 56px ปุ่มย้อนกลับ 44×44 · <b>เมนูล่าง 3 แท็บ</b> <span class="q">คอร์ส</span> (ไอคอนบ้าน · หน้าหลัก "คอร์สของฉัน") · <span class="q">ประวัติ</span> (ไอคอนรายการ) · <span class="q">บัญชี</span> (ไอคอนคน) · สูง 56px + safe-area · ไอคอน 22px ป้าย 13px · แท็บที่เลือก = primary ตัวหนา + aria-current</li>
+    <li>ลิงก์ "จัดการคอร์ส" บนหน้าหลักไปหน้าจัดการคอร์ส/ป้ายชื่อ (แทน "ลูกและคลาส" เดิม)</li>
+    <li>เป้าแตะทุกอัน ≥ 44px · ปุ่มหลักสูง ≥ 48px · ใช้มือเดียวในแอป LINE · รองรับ reduced motion · WCAG 2.2 AA</li>
+  </ul>
+
+  <h3>คอมโพเนนต์</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>คอมโพเนนต์</th><th>รูปแบบ</th><th>สถานะในโค้ด</th></tr></thead>
+    <tbody>
+      <tr><td>ปุ่ม Primary / Secondary / Danger / Small</td><td>มุม 14px (เล็ก 12px) · Primary พื้น primary ตัวขาว สูง ≥ 48px · 1 จอมีปุ่มหลัก 1 ปุ่ม · Secondary พื้นขาวขอบ primary · Danger ขอบแดงสำหรับสิ่งที่ย้อนไม่ได้ · ปิดใช้ = พื้น track ตัว muted</td><td><span class="tag t-merged">มีแล้ว</span></td></tr>
+      <tr><td>การ์ด</td><td>มุม 20px · พื้นขาว ขอบ 1px · padding 16px · ไม่มีเงา</td><td><span class="tag t-merged">มีแล้ว</span></td></tr>
+      <tr><td>Callout</td><td>มุม 16px · ไอคอนนำหน้าเสมอ · error ใส่ role="alert" · โทน info / ok / warning / danger</td><td><span class="tag t-merged">มีแล้ว</span></td></tr>
+      <tr><td>Field / Input</td><td>สูง 48px · ขอบ muted มุม 12px · ตัว 16px · ป้ายหนาเหนือช่อง hint ใต้ช่อง</td><td><span class="tag t-merged">มีแล้ว</span></td></tr>
+      <tr><td>Status chip</td><td>ทรง pill ไอคอน 14px + ข้อความ 13px · "พักอยู่" (warning + pause) · "เลิกเรียนแล้ว" (track + ban)</td><td><span class="tag t-merged">มีแล้ว</span></td></tr>
+      <tr><td>ExpiryBadge + expiryState</td><td>5 สถานะ ข้อความ + ไอคอน (ข้อ 4.8)</td><td><span class="tag t-plan">P5c-1</span></td></tr>
+      <tr><td>ExpirySection</td><td>ส่วนวันหมดอายุในหน้าคอร์ส: วันที่บันทึก + ป้าย + ช่องเลือกวัน + "ไม่มีวันหมดอายุ" + ปุ่มบันทึก</td><td><span class="tag t-plan">P5c-1</span></td></tr>
+      <tr><td>แถบ "ใช้ไป / ทั้งหมด"</td><td>ราง track ส่วนที่ใช้ไป primary (ไม่เปลี่ยนสีตามยอด) · มีตัวเลขกำกับเสมอ เช่น "ใช้ไป 6 / 10 ครั้ง" · role="progressbar"</td><td><span class="tag t-plan">ยังไม่มี · สร้างเมื่อใช้ครั้งแรก</span></td></tr>
+      <tr><td>ConsumeView</td><td>หน้าตัดคอร์ส LIFF (ข้อ 4.7)</td><td><span class="tag t-plan">P5c-1</span></td></tr>
+      <tr><td>CourseForm</td><td>ฟอร์มเพิ่มคอร์ส 3 แบบ (ข้อ 4.6)</td><td><span class="tag t-plan">P4c-UI</span></td></tr>
+      <tr><td>Flex card (LINE)</td><td>bubble ขนาด mega · หัวพื้น primary-soft · บรรทัดสถานะ (ไอคอน + ข้อความ) → ชื่อคอร์ส → ก่อน → หลัง (ตัวเลขเด่น) → ปุ่ม · ปุ่มหลัก style primary · ข้อความทั้งหมดมาจากไฟล์ copy</td><td><span class="tag t-merged">ชิ้นส่วนมีแล้ว</span> · Flow A เต็ม <span class="tag t-review">รอรวม</span></td></tr>
+      <tr><td>Rich menu image v3</td><td>6 ช่อง ปุ่ม "ตัดคอร์ส" สี primary · ปุ่มรองพื้นขาว</td><td><span class="tag t-merged">มีไฟล์แล้ว</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>น้ำเสียงและกฎของข้อความ</h3>
+  <ul>
+    <li>ภาษาไทยธรรมดา เป็นกันเอง สั้น ตรง ตัวเลขเด่น · ไม่ใช้ศัพท์เทคนิค (active, reversal, archive) กับผู้ใช้</li>
+    <li><b>พูดเฉพาะสิ่งที่เกิดขึ้นจริง</b> "ตัดยอดแล้ว" ขึ้นหลังฐานข้อมูลตอบสำเร็จเท่านั้น · ข้อความผิดพลาดบอกเสมอว่า "ยังไม่ได้ตัดยอด"</li>
+    <li><b>Copy ห้ามสัญญาสิ่งที่โค้ดยังไม่ทำ</b> ทุกปุ่ม/เส้นทางที่ข้อความอ้างถึงต้องมีจริงก่อนปล่อย ไม่มี = ตัดประโยคนั้นออก (บทเรียน L-0123)</li>
+    <li>ไม่โทษผู้ใช้ · บอกทางแก้พร้อมปุ่ม · ไม่ใช้สีอย่างเดียวบอกสถานะ</li>
+    <li>ข้อความเตือนหมดอายุ ป้าย และแถบเตือน <b>ไม่มีคำชวนอัปเกรด/ซื้อเพิ่ม/ต่ออายุ</b></li>
+    <li>ไม่ใช้คำที่ผูกกับเด็ก/คลาสอย่างเดียว เพราะแอปใช้กับคอร์สทุกชนิด</li>
+  </ul>
+  <details open>
+    <summary>Glossary: คำที่ใช้ / คำที่เลี่ยง</summary>
+    <div class="body">
+      <div class="tbl"><table>
+        <thead><tr><th>ความหมาย</th><th>คำที่ใช้</th><th>เลี่ยง / ห้าม</th></tr></thead>
+        <tbody>
+          <tr><td>ปุ่ม/ชื่อฟีเจอร์</td><td>ตัดคอร์ส</td><td>–</td></tr>
+          <tr><td>ในประโยค</td><td>ตัดยอด ("ตัดยอดแล้ว" · "ไม่ได้ตัดยอด")</td><td>หักเงิน</td></tr>
+          <tr><td>ยอดบนการ์ด / ที่อื่น</td><td>เหลือ / คงเหลือ</td><td>–</td></tr>
+          <tr><td>ยอดคอร์สมูลค่า</td><td>คงเหลือตามที่คุณบันทึก</td><td>ยอดเงินในบัญชี · ยอดเครดิตของเรา</td></tr>
+          <tr><td>ซื้อเพิ่ม</td><td>บันทึกซื้อเพิ่ม · ซื้อเพิ่มกับร้าน</td><td>เติมเงิน · top-up · เติมชั่วโมง (กับคอร์สมูลค่า)</td></tr>
+          <tr><td>คอร์สที่นับโควตา</td><td>คอร์สที่ใช้อยู่</td><td>active · คอร์สที่ใช้งานพร้อมกัน</td></tr>
+          <tr><td>แก้ย้อนหลัง</td><td>แก้รายการ</td><td>ลบรายการ · ย้อนรายการ</td></tr>
+          <tr><td>เก็บไว้ไม่ใช้</td><td>เก็บเข้าคลัง / คลัง</td><td>ลบคอร์ส</td></tr>
+          <tr><td>สมาชิกของเรา</td><td>แผน (Free / Pro / Max) · ก่อนเปิดชำระ "แผน Pro/Max (ยังไม่เปิด)"</td><td>แพ็กเกจ · แผนเสริม · เร็วๆ นี้</td></tr>
+          <tr><td>คนที่ใช้คอร์ส</td><td>ป้ายชื่อ</td><td>สมาชิก · ผู้ใช้ร่วม</td></tr>
+          <tr><td>ชนิดที่ 3</td><td>นับเป็นมูลค่าบริการ</td><td>เครดิตร้าน · เครดิตของเรา · พอยต์</td></tr>
+          <tr><td>VALUE: เงินที่จ่าย / ที่ได้ / ส่วนเกิน</td><td>เงินที่คุณจ่ายร้าน / มูลค่าบริการที่ร้านให้ / ส่วนที่ร้านให้เพิ่ม</td><td>ยอดชำระผ่านเรา · เครดิตแอป</td></tr>
+          <tr><td>เมนูล่างของแอป</td><td>คอร์ส · ประวัติ · บัญชี · ลิงก์ "จัดการคอร์ส"</td><td>ลูกและคลาส · หน้าแรก · ตั้งค่า</td></tr>
+          <tr><td>ป้ายวันหมดอายุ</td><td>ยังไม่หมดอายุ · อีก {n} วัน · หมดอายุวันนี้ · หมดอายุแล้ว · ไม่มีวันหมดอายุ</td><td>หมดเขต · ใกล้ตาย · "ใช้ได้" ลอยๆ (อ่านเหมือนร้านรับรองสิทธิ์)</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout bad"><svg width="20" height="20" aria-hidden="true"><use href="#i-x"/></svg><div><b>คำต้องห้ามทั้งระบบ (law):</b> wallet / e-wallet · กระเป๋าเงิน · เติมเงิน / top-up · เครดิตของเรา / เครดิตแอป / พอยต์ · ยอดเงินในบัญชี · ถอน / โอน / จ่ายด้วยเครดิต · ใช้แทนเงินสด · ยืนยันโดยร้าน · ป้าย "ยืนยันแล้ว" / official</div></div>
+    </div>
+  </details>
+</section>
+
+<!-- ===================================================== 6 -->
+<section id="plans">
+  <h2><span class="n">6</span>แผนและราคา (คำตัดสินล่าสุด 11 พ.ย. คืน)</h2>
+  <p class="sub">คำตัดสินช่วงดึกแทนที่คำตัดสินช่วงเช้าเมื่อขัดกัน · บรรทัด "CORRECTION" ล่าสุดชนะทุกข้อ</p>
+
+  <div class="tbl"><table>
+    <thead><tr><th>สิทธิ์</th><th>Free</th><th>Pro</th><th>Max</th></tr></thead>
+    <tbody>
+      <tr><td>ราคา</td><td><b>ฟรีตลอด</b> ไม่จำกัดเวลา</td><td>6 เดือน / 12 เดือน · <b>ราคายังไม่ตัดสิน</b></td><td>6 เดือน / 12 เดือน · <b>ราคายังไม่ตัดสิน</b> (สูงกว่า Pro)</td></tr>
+      <tr><td>คอร์สที่ใช้อยู่ (คอร์สในคลังไม่นับ)</td><td class="num">5</td><td class="num">20</td><td class="num">60</td></tr>
+      <tr><td>ตัดคอร์สเอง · ดูยอด · ประวัติ · แก้รายการ</td><td colspan="3">ได้ทุกแผน · <b>ไม่ถูกบล็อกเพราะแผน ไม่ว่ากรณีใด</b></td></tr>
+      <tr><td>ตารางเรียนประจำ</td><td>ดู/บันทึกได้</td><td colspan="2">ดู/บันทึกได้ + เตือนก่อนคลาส</td></tr>
+      <tr><td>ข้อความเตือนก่อนคลาสทาง LINE</td><td class="num">0</td><td class="num">≤ 100 ข้อความ/เดือน</td><td class="num">≤ 300 ข้อความ/เดือน</td></tr>
+      <tr><td>เตือนก่อนคอร์สหมดอายุ</td><td>แถบเตือนในแอปเท่านั้น (ไม่มีข้อความทาง LINE)</td><td colspan="2">แถบในแอป + ข้อความ LINE ล่วงหน้า 14 และ 3 วัน (ไม่นับโควตา · ปิดได้)</td></tr>
+      <tr><td>บัญชี LINE</td><td colspan="3">1 บัญชี LINE ต่อ 1 บัญชีผู้ใช้ (ไม่แชร์ร่วมกัน)</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h4 style="margin-top:0">การชำระเงิน</h4>
+      <ul>
+        <li><b>ช่องทาง LINE เท่านั้น</b> ไม่มีคอลัมน์ราคา Telegram อีกต่อไป</li>
+        <li><b>ระยะเวลา 6 เดือน และ 12 เดือนเท่านั้น</b> (ไม่มีรายเดือน ไม่มี 3 เดือน · แก้ทับคำตัดสินเดิมที่เคยมีรายเดือนเริ่ม 99 บาท)</li>
+        <li><b>PromptPay ก่อน:</b> จ่ายเองทีละรอบ + ส่งสลิป → แอดมินอนุมัติด้วยมือ → สิทธิ์ขึ้น · ส่งสลิปได้ในแอปและในแชท</li>
+        <li><b>บัตรต่ออายุอัตโนมัติมาทีหลัง</b> เป็นงานแยก (ต้องมี payment gateway + ข้อกำหนดเรื่องต่ออายุ/ยกเลิก)</li>
+        <li>ต่ออายุ = จ่ายรอบใหม่เอง · ข้อความบน landing ช่วง PromptPay อย่างเดียว: "ไม่ต้องผูกบัตร ไม่ต่ออายุให้อัตโนมัติ" (รอ law) · ห้ามใช้ "ไม่ตัดเงินอัตโนมัติ" (law ตัดแล้ว)</li>
+        <li>ราคาในหน้าจอเป็นตัวแปร {price} จนกว่าจะมีราคา v3 ในระบบ · ราคาจะเก็บในตารางฐานข้อมูล (ไม่ฝังในโค้ด) ไม่มีราคา = หน้า checkout บอก "ยังไม่เปิดราคา"</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">กติกาที่ตัดสินแล้ว</h4>
+      <ul>
+        <li><b>Free ไม่แช่แข็ง:</b> การตัดคอร์สเองไม่ถูกบล็อกเพราะแผน เพดาน หรือแผนหมดอายุ (ระงับบัญชีเพราะผิดกติกายังบล็อกได้) · งาน PL-A</li>
+        <li><b>แผนเสียเงินหมดอายุ</b> → กลับเป็น Free · คอร์สเกินเพดานยังตัดได้ แต่สร้างคอร์สใหม่ไม่ได้จนกว่าจะเก็บเข้าคลัง (ข้อเสนอใน PL-A · ถ้อยคำแจ้งยังต้องผ่าน law)</li>
+        <li><b>โควตาเตือน</b> รีเซ็ตรายเดือน ไม่สะสม · ครบแล้วยังตัดเองได้</li>
+        <li><b>อัปเกรดสิทธิ์จากการชำระที่ยืนยันแล้วเท่านั้น</b> ห้ามอัปเกรดจากการกดปุ่ม</li>
+        <li><b>ข้อกำหนดข้อ 13 (R1-b) = ตัวเลือก 1:</b> ผู้ใช้ Free ต้องยอมรับข้อกำหนดฉบับใหม่เพื่อใช้ต่อ แต่ยังดู/ส่งออก/ลบข้อมูลได้</li>
+        <li><b>เพดานความรับผิด (ข้อกำหนดข้อ 11)</b> = ราคา Max 12 เดือน เมื่อกำหนดราคาแล้ว (ตัวเลขในร่างตอนนี้เป็นค่าชั่วคราว)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout warn"><svg width="20" height="20" aria-hidden="true"><use href="#i-alert"/></svg><div><b>ยังไม่ตัดสิน:</b> ราคา Pro/Max ของ 6 และ 12 เดือน · บัญชีที่เราให้สิทธิ์โดยไม่คิดเงิน (comp) ได้รับเตือนหมดอายุหรือไม่ (R2) · อัปเกรด Pro → Max กลางรอบ (Q-L6) · ราคาในสเปกต้นฉบับเป็นเพียงข้อเสนอเพื่อทดลองตลาด ยังไม่ผ่านการทดสอบตลาดหรือต้นทุนจริง และไม่ได้ใช้แล้ว</div></div>
+</section>
+
+<!-- ===================================================== 7 -->
+<section id="legal">
+  <h2><span class="n">7</span>กฎหมายและ compliance</h2>
+  <p class="sub">เอกสารฉบับ v3 เป็นเวอร์ชันหลักใหม่ (2.0.0) เพราะขอบเขตเปลี่ยน: ครัวเรือน → บัญชีเดี่ยว · ตัดช่องทางอื่นนอกจาก LINE · เพิ่มคอร์สแบบมูลค่า · แผน Free/Pro/Max · ช่องรับรองอายุ</p>
+
+  <div class="tbl"><table>
+    <thead><tr><th>เอกสาร</th><th>ฉบับล่าสุด</th><th>สถานะ</th></tr></thead>
+    <tbody>
+      <tr><td>ข้อกำหนดการใช้งาน</td><td>v2.0.0 draft7 (14 ข้อ)</td><td><span class="tag t-review">ยังไม่ผ่าน law/zoro</span> · มี ❓ รอเจ้าของ 3 จุด (2 จุดตัดสินแล้วคืนนี้)</td></tr>
+      <tr><td>ประกาศความเป็นส่วนตัว</td><td>v2.0.0 draft6 (9 ข้อ)</td><td><span class="tag t-review">ยังไม่ผ่าน law</span> · draft5 เคยผ่าน law แล้ว</td></tr>
+      <tr><td>กล่องสมัครใช้ (signup box)</td><td>v2.0.0 draft1</td><td><span class="tag t-review">ร่าง</span></td></tr>
+      <tr><td>FAQ v3</td><td>draft2–4 (69 คำถาม)</td><td><span class="tag t-review">ในรอบ law/zoro</span></td></tr>
+      <tr><td>Copy ทุก flow</td><td>draft14</td><td><span class="tag t-review">ในรอบ law/zoro</span></td></tr>
+      <tr><td>เอกสารบน v2 ที่ใช้อยู่</td><td>ประกาศความเป็นส่วนตัว 1.1.0 + ข้อกำหนดของ v2</td><td><span class="tag t-live">LIVE บน v2</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <details>
+    <summary>โครงข้อกำหนดการใช้งาน v2.0.0 (14 ข้อ)</summary>
+    <div class="body">
+      <ol class="cols2">
+        <li>ผู้ให้บริการและช่องทางติดต่อ</li>
+        <li>บริการนี้คืออะไร และใครใช้ได้</li>
+        <li>คอร์สและการตัดยอด</li>
+        <li>ยอดในแอปเป็นบันทึกส่วนตัว ไม่ใช่การรับรองจากร้าน (สำคัญ)</li>
+        <li>แผน</li>
+        <li>ข้อความเตือนเป็นเพียงตัวช่วย (สำคัญ)</li>
+        <li>บันทึกตัดยอดแก้ย้อนหลังไม่ได้</li>
+        <li>สิ่งที่ห้ามทำ และการระงับบริการ</li>
+        <li>ลบบัญชีและส่งออกข้อมูล</li>
+        <li>ผู้ใช้อายุไม่ถึง 20 ปี (และการคืนเงิน · ส่วนชำระเงิน)</li>
+        <li>ความรับผิดและการรับประกันของบริการ</li>
+        <li>เมื่อบริการเปลี่ยนแปลงหรือปิด</li>
+        <li>การแก้ไขข้อกำหนด</li>
+        <li>กฎหมายที่ใช้และการติดต่อ</li>
+      </ol>
+      <p>เนื้อหาเรื่องชำระเงิน แผนเสียเงิน และการคืนเงินห่อไว้ในบล็อก "BILLING-ONLY" ซึ่ง<b>จะไม่แสดงจนกว่าจะเปิดรับชำระ</b> แล้วออกเป็นฉบับ 2.1.0 · บล็อกบัตรต่ออายุอัตโนมัติยังซ่อนอยู่อีกชั้น</p>
+      <p>ประกาศความเป็นส่วนตัว 9 ข้อ: ผู้ควบคุมข้อมูล · ข้อมูลที่เก็บ · ใช้เพื่ออะไร · เปิดเผยให้ใคร/ส่งไปประเทศไหน · เก็บนานแค่ไหนและสำเนาสำรอง · สิทธิของคุณ · ผู้ใช้อายุไม่ถึง 20 ปีและข้อมูลของเด็ก · ความปลอดภัย · การเปลี่ยนแปลงประกาศ · draft6 เพิ่มข้อมูลสลิป PromptPay กลับเข้าไป (ในบล็อก BILLING-ONLY · เก็บสลิปที่ชำระสำเร็จ 5 ปี · ที่ถูกปฏิเสธ/หมดเวลา 1 ปี · ยังต้องยืนยันกับโค้ดจริง)</p>
+    </div>
+  </details>
+
+  <h3>สิ่งที่ law / zoro ชี้ไว้ (สำคัญ)</h3>
+  <ul>
+    <li><b>หน้า landing ใน trunk ไม่ตรงความจริงภายใต้ v3</b> ทั้งหน้า → เขียนใหม่ทั้ง hero, 3 ขั้น, จุดเด่น และบล็อกราคา</li>
+    <li><b>กล่องข้อความช่วงทดลองยังสัญญาเรื่อง Telegram และ "เพิ่มลูกได้ 1 คน"</b> → ต้องเผยแพร่เอกสาร v3 (P8) ก่อนมีลูกค้า</li>
+    <li><b>ผู้ใช้ Free ยังได้รับ LINE push อยู่ 1 ชนิด</b> คือประกาศบัญชีไม่ใช้งานก่อนลบข้อมูล → ข้อกำหนดห้ามเขียนว่า "ไม่มีข้อความทาง LINE ทุกชนิด" ให้เขียนเฉพาะ "ก่อนคลาสและก่อนคอร์สหมดอายุ"</li>
+    <li>ป้าย "ใช้ฟรีตลอด" อ่านเป็น "ตลอดไป" เสี่ยงสัญญาเกิน → ใช้ "ใช้ฟรีไม่จำกัดเวลาด้วยแผน Free" (ข้อกำหนดเขียนเป็นสถานะปัจจุบัน และบอกว่าเปลี่ยนแปลงได้ตามข้อ 12–13)</li>
+    <li>ฟังก์ชันพรีวิวการตัดเดิม<b>ไม่ตรวจวันหมดอายุ/สถานะ</b> → ห้ามมีข้อความ "ตัดได้" กับคอร์สที่หมดอายุ จนกว่าหน้าตัดคอร์สจะตรวจก่อนแสดง</li>
+    <li>ข้อความ "ไม่มีเตือน" ต้องตัดสินจาก "สิทธิ์เตือน = 0" ไม่ใช่ชื่อแผน (เผื่อบัญชี comp)</li>
+    <li>เพดานความรับผิดเดิมอิงราคา Max 12 เดือนของสเปกที่ยกเลิกแล้ว → Mr.Foxx ตัดสินให้ใช้ราคา Max 12 เดือนจริงเมื่อกำหนดราคา</li>
+    <li>คอร์สมูลค่าต้องสื่อว่าเป็นบันทึกส่วนตัว ไม่ใช่การถือเงินแทนร้าน · ข้อความชี้แจงแสดงเต็ม 3 จุด (ตอนสร้างคอร์ส · หน้ายอดคงเหลือ · การ์ดหลังตัด)</li>
+    <li>ชื่อคอร์สขึ้นบนหน้าจอล็อก → เตือนไม่ให้ใส่ข้อมูลสุขภาพ (ข้อมูลอ่อนไหวตาม PDPA)</li>
+    <li>FAQ: แก้คำที่เด็ดขาดเกิน (เช่น "ทันที" "กู้คืนไม่ได้") · เพิ่มผู้ประมวลผลข้อมูลข้ามประเทศให้ครบ · ใช้คำ "หน้าบัญชี" แทน "หน้าตั้งค่า"</li>
+  </ul>
+
+  <h3>เงื่อนไขก่อนปล่อย</h3>
+  <div class="callout"><svg width="20" height="20" aria-hidden="true"><use href="#i-info"/></svg><div><b>หลักใหญ่: copy และเอกสารต้องไม่สัญญาสิ่งที่โค้ดยังไม่ทำ</b> และโค้ดต้องไม่ทำสิ่งที่เอกสารไม่ได้บอก</div></div>
+  <ul>
+    <li>ขั้น "เพิ่มคอร์ส" บน landing → ปล่อยได้เมื่อ P5c-1 + Flow C ใช้งานจริง</li>
+    <li>"ตัดยอดแล้วยังแก้รายการได้ในประวัติ" → ปล่อยพร้อมฟีเจอร์แก้รายการเท่านั้น</li>
+    <li>บล็อกราคาบน landing → ไม่แสดงจนกว่าจะมีราคา v3 ในระบบ <b>และ</b> เปิดรับชำระแล้ว · ต้องมีข้อกำหนด 2.1.0 และประกาศความเป็นส่วนตัว 2.1.0 ที่พูดถึงสลิป</li>
+    <li>ปุ่ม "เปิดแอป" ในข้อความยังไม่สมัคร → ต้องเปิดหน้าสมัคร v3 จริง (หน้าสมัครเดิมยังพูดถึง "สร้างครอบครัว… เฉพาะพ่อหรือแม่")</li>
+    <li>เตือนหมดอายุผ่าน LINE → เปิดเมื่อหน้าจอ P5c-1 + P5c-2 รวมแล้วและทดสอบบนมือถือจริง</li>
+    <li>ช่องรับรองอายุใช้ 3 จุด (สมัคร · ชำระครั้งแรก · ยินยอมซ้ำ) และลิงก์ต้องเปิดเอกสารเวอร์ชันที่กำลังยอมรับ</li>
+  </ul>
+</section>
+
+<!-- ===================================================== 8 -->
+<section id="arch">
+  <h2><span class="n">8</span>สถาปัตยกรรมและกระบวนการคุมคุณภาพ</h2>
+  <p class="sub">ภาพระดับสูงเท่านั้น</p>
+
+  <div class="card">
+    <div class="flowrow"><span class="s">ผู้ใช้ในแอป LINE</span><span class="a">⇄</span><span class="s">LINE Platform (OA · Messaging API · LIFF)</span><span class="a">⇄</span><span class="s">Cloudflare Tunnel</span><span class="a">⇄</span><span class="s p">แอป Next.js (หน้าจอ LIFF + API + webhook)</span><span class="a">⇄</span><span class="s">PostgreSQL</span></div>
+    <div class="flowrow"><span class="s">Worker แยก process</span><span class="a">→</span><span class="s">สร้างคลาสตามตาราง · ส่ง push ครั้งเดียวต่อคลาส · นับโควตา · ประกาศต่างๆ</span><span class="a">→</span><span class="s">LINE Messaging API</span></div>
+    <div class="flowrow"><span class="s">Backup เข้ารหัสนอกเครื่อง</span><span class="a">·</span><span class="s">ซ้อมกู้ข้อมูลรายเดือนเป็นสคริปต์</span><span class="a">·</span><span class="s">health check + แจ้งเตือนผู้ดูแล</span></div>
+  </div>
+
+  <div class="grid g2" style="margin-top:12px">
+    <div class="card">
+      <h4 style="margin-top:0">Stack</h4>
+      <ul>
+        <li>Next.js 16 (App Router) · React 19 · TypeScript strict · Tailwind 4</li>
+        <li>PostgreSQL 16 · Drizzle (migration) · ฟังก์ชัน SQL แบบ DEFINER คุมการเขียนยอด · RLS แยกข้อมูลแต่ละบัญชี · บทบาทฐานข้อมูลแยกสิทธิ์</li>
+        <li>LINE OA + Messaging API (เรียก REST ตรง) + LIFF · postback token มีลายเซ็น</li>
+        <li>Docker Compose บน <b>VPS ของเราเอง</b> (ไม่ใช้ Vercel / GitHub Pages กับตัวแอป) · Cloudflare Tunnel</li>
+        <li><b>Staging ถาวร</b> แยกฐานข้อมูลและ OA ทดสอบ อยู่หลัง Cloudflare Access · มีด่านกันชี้ secret หรือ OA จริงโดยไม่ตั้งใจ</li>
+        <li>เทสต์: Vitest (unit + integration บนฐานข้อมูลจริง) · Playwright e2e บน production build</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">ความปลอดภัยและความน่าเชื่อถือ</h4>
+      <ul>
+        <li>ตรวจลายเซ็น webhook จาก raw body · ตรวจ identity token ของ LIFF ฝั่งเซิร์ฟเวอร์ · ไม่เชื่อ user id จากเครื่องผู้ใช้</li>
+        <li>Webhook dedup (กันส่งซ้ำ) · ledger แบบ idempotent · rate limit · ตรวจสิทธิ์ทุก query</li>
+        <li><b>เจ้าของบัญชีเท่านั้น</b> ที่เขียนยอด ตอบคลาส หรือรับ push ได้ (ตรวจก่อนอ่านข้อมูล และตรวจซ้ำใต้ล็อก)</li>
+        <li>ด่าน journal ของ migration: ฐานข้อมูลต้องตรงกับ image ก่อนและหลัง migrate · release แบบเดินหน้าอย่างเดียว ถอยกลับด้วย snapshot</li>
+        <li>Secret อยู่นอก git · มีขั้นตอนหมุน token/secret และตรวจการตั้งค่าก่อนรันทุกครั้ง</li>
+        <li>PDPA: ลบข้อมูลทั้งบัญชี · backup ที่จำได้ว่าข้อมูลไหนถูกลบ · บัญชีไม่ใช้งานแจ้งก่อนลบ</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Migration</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>ช่วง</th><th>เนื้อหา</th><th>สถานะ</th></tr></thead>
+    <tbody>
+      <tr><td>0000–0025</td><td>v2 ทั้งหมด (ครัวเรือน · ledger · ตาราง · PDPA · entitlement · billing schema · บ้านไม่ใช้งาน)</td><td><span class="tag t-live">LIVE (26 ไฟล์)</span></td></tr>
+      <tr><td>0026</td><td>คาบเสริม (จากรอบเปิดรับชำระของ v2)</td><td><span class="tag t-merged">trunk</span></td></tr>
+      <tr><td>0027–0028</td><td>โมเดลคอร์ส 3 แบบ + หน่วยยอด (นาที/ครั้ง/สตางค์) + ฟังก์ชันตัด/แก้รายการ</td><td><span class="tag t-merged">trunk</span></td></tr>
+      <tr><td>0029</td><td>บัญชีเดี่ยว (ปิดคำเชิญ · เพดานสมาชิก 1)</td><td><span class="tag t-merged">trunk</span></td></tr>
+      <tr><td>0030</td><td>คลาสตามตาราง (occurrence) + การตอบ Flow B</td><td><span class="tag t-merged">trunk</span></td></tr>
+      <tr><td>0031</td><td>ย้ายตัวตน LINE (identity rebind)</td><td><span class="tag t-merged">trunk</span></td></tr>
+      <tr><td>0032</td><td>เลิกใช้ Telegram ฝั่งผู้ใช้</td><td><span class="tag t-merged">trunk</span></td></tr>
+      <tr><td>0033</td><td>push เฉพาะเจ้าของ + โควตาต่อแผน + สวิตช์เตือน</td><td><span class="tag t-review">รอรวม</span></td></tr>
+      <tr><td>0034–0039</td><td>P5b เครื่องเตือนหมดอายุ · P3 แปลงข้อมูลตอนย้าย · P5c-3 ป้ายชื่อไม่บังคับ · P4c-UI ฟอร์มเพิ่มคอร์ส · PL-A แผน/เพดาน · PL-B ชำระเงิน v3</td><td><span class="tag t-plan">วางแผน</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>กระบวนการทีม</h3>
+  <div class="grid g2">
+    <div class="card">
+      <h4 style="margin-top:0">สายโค้ด</h4>
+      <div class="flowrow"><span class="s">nami วางแผน/แตกงาน</span><span class="a">→</span><span class="s">franky เขียน</span><span class="a">→</span><span class="s">chopper รีวิว</span><span class="a">→</span><span class="s">jinbe ตรวจอิสระ</span><span class="a">→</span><span class="s p">luffy รวม</span></div>
+      <ul>
+        <li>ทุกงานเกินเกณฑ์เล็กผ่านครบ 4 ขั้น · งานแก้ตาม finding ของ jinbe ข้าม nami ได้แต่ต้องรีวิวและตรวจซ้ำเสมอ</li>
+        <li>ใช้ <b>mutation test</b> (จงใจทำโค้ดพังแล้วดูว่าเทสต์จับได้) ในจุดสำคัญ เช่น การตรวจเจ้าของบัญชี</li>
+        <li>รันเทสต์เต็มบน tree ที่ rebase แล้วก่อนรวมทุกครั้ง · แยก worktree และฐานข้อมูลทดสอบต่อคน</li>
+        <li>iceberg ให้ความเห็นเชิงกลยุทธ์ก่อนตัดสินใจใหญ่ (เช่น การเปลี่ยนทิศ v3)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">สายข้อความและกฎหมาย</h4>
+      <div class="flowrow"><span class="s">usopp เขียน</span><span class="a">→</span><span class="s">law ตรวจข้อเท็จจริง/กฎหมาย</span><span class="a">→</span><span class="s">zoro ตรวจคุณภาพงานเขียน</span><span class="a">→</span><span class="s p">luffy ตัดสิน</span></div>
+      <ul>
+        <li>ข้อเท็จจริงของ LINE (ขีดจำกัด · token · ตัวตน) ค้นโดย vegapunk แล้ว law ตรวจกับเอกสารทางการ (R1–R7)</li>
+        <li>บทเรียนทุกครั้งที่พลาดบันทึกเป็น ledger (เลข L-NNNN) และทุก agent อ่านก่อนเริ่มงาน</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>ตัวเลขเทสต์จากรายงานรีวิวล่าสุด (11 พ.ย.)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>รอบ</th><th class="num">unit</th><th class="num">integration</th><th class="num">e2e</th><th>ผล</th></tr></thead>
+    <tbody>
+      <tr><td>P4b-F (Flow A)</td><td class="num">1,872</td><td class="num">–</td><td class="num">–</td><td>jinbe PASS · ชุดเทสต์ webhook 76/76 บน tree ที่รวมแล้ว</td></tr>
+      <tr><td>P5a 0033</td><td class="num">1,718</td><td class="num">1,399</td><td class="num">70</td><td>chopper + jinbe PASS (ต้อง rebase แล้วตรวจซ้ำ)</td></tr>
+      <tr><td>TG-retire 0032</td><td class="num">1,797</td><td class="num">1,184</td><td class="num">10</td><td>PASS · รวมแล้ว</td></tr>
+      <tr><td>Lane Y4</td><td class="num" colspan="3">87/87 ในไฟล์ที่เกี่ยวข้อง · ทดสอบ rsync จริงทั้งสองทิศ</td><td>PASS · รวมแล้ว</td></tr>
+    </tbody>
+  </table></div>
+  <p class="stat-l">ตัวเลขต่างกันตามสาขาที่รันและจำนวนเทสต์ที่ข้ามโดยตั้งใจ ไม่ใช่ตัวเลขรวมของ trunk</p>
+</section>
+
+<!-- ===================================================== 9 -->
+<section id="left">
+  <h2><span class="n">9</span>งานที่เหลือ และคำถามที่รอ Mr.Foxx</h2>
+
+  <div class="grid g2">
+    <div class="card">
+      <h4 style="margin-top:0">ก่อนย้ายระบบ (cutover v3)</h4>
+      <ol>
+        <li>รวม <b>P4b-F</b> (Flow A) + เปิดทาง webhook ผ่าน Access ที่ staging เฉพาะ POST เส้นเดียว</li>
+        <li>rebase <b>P5a 0033</b> ทับ 0032 (ต้องสร้างฟังก์ชันลบข้อมูล PDPA จากฉบับของ 0032 ใหม่ ไม่งั้นการลบจะพังตอนรันจริง) → ตรวจซ้ำ → รวม</li>
+        <li><b>P5b 0034</b> เครื่องเตือนหมดอายุ + ตรวจเจ้าของตอนแก้วันหมดอายุ + ช่วงเวลาเตือนถึง 1 วัน</li>
+        <li><b>P5c-1</b> ป้าย/แถบวันหมดอายุ + หน้าตัดคอร์ส LIFF (ตอนนี้ Flow A แบบมูลค่าใช้ไม่ได้จนกว่าจะมีหน้านี้)</li>
+        <li><b>P5c-2</b> หน้าบัญชี: สวิตช์ 2 ตัว + เวลาเตือน</li>
+        <li><b>P5c-3</b> ป้ายชื่อไม่บังคับจริง (Mr.Foxx ตัดสินแล้ว · ต้องแก้ทุกจุดที่อ่านชื่อลูก)</li>
+        <li><b>P4c-UI</b> ฟอร์มเพิ่มคอร์ส 3 แบบ (Mr.Foxx ตัดสินว่าต้องมีก่อนย้าย)</li>
+        <li><b>PL-A</b> แผน/เพดาน 5-20-60/ไม่แช่แข็ง (แนะนำให้เป็นตัวขวาง · ไม่งั้นย้ายระบบแล้ว Free จะติดเพดานทดลองเดิม 2 คอร์ส ขัดกับข้อความ "5 คอร์ส")</li>
+        <li><b>P8</b> เผยแพร่ข้อกำหนด/ประกาศ/กล่องสมัคร/FAQ v3 · เขียน landing ใหม่ผ่าน law · หน้าสมัคร v3</li>
+        <li><b>P3 0035</b> แปลงข้อมูลเดิม + คู่มือย้ายระบบ ซ้อมบน staging ก่อน</li>
+        <li>staging ขึ้น image v3 → Mr.Foxx login บนมือถือ 1 ครั้ง → ทดสอบสร้างคอร์สแต่ละแบบจาก rich menu</li>
+        <li>เก็บงานเจ้าของบัญชีที่เหลือ (สมาชิกคนที่ 2 ของบ้านเดิมยังเขียนผ่านเส้นทาง v2 ได้บางทาง)</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">ก่อนเปิดรับชำระ (open-billing)</h4>
+      <ol>
+        <li><b>P6</b> ถอดแพ็ก Telegram ที่เหลือในราคา/checkout + ย้าย bot token ออกจากตัวแอป (เหลือที่ worker)</li>
+        <li><b>PL-B</b> ระบบชำระ v3: Pro/Max × 6/12 เดือน · ราคาในตารางฐานข้อมูล · PromptPay + สลิป + อนุมัติด้วยมือ · อนุมัติแล้วต่อช่วงเวลาซ้อนกันได้</li>
+        <li><b>Mr.Foxx กำหนดราคา</b> 4 ตัว และเพดานความรับผิดตามราคา Max 12 เดือน</li>
+        <li>ข้อกำหนด <b>2.1.0</b> + ประกาศความเป็นส่วนตัว <b>2.1.0</b> (ข้อมูลสลิป · ระยะเก็บ) ผ่าน law</li>
+        <li>ทดสอบหน้า billing บน staging โดย Mr.Foxx</li>
+        <li>ภายหลัง: บัตรต่ออายุอัตโนมัติเป็นงานแยก (gateway + ข้อกำหนดเรื่องยกเลิก)</li>
+      </ol>
+      <h4>งานบ้าน</h4>
+      <ul>
+        <li>ระบบเก่า v1 หยุดให้บริการแล้วแต่ยังไม่ retire เต็ม (ฐานข้อมูลเก่าและ dump สุดท้ายที่มีข้อมูลส่วนบุคคลรอลบตามกำหนด · ไฟล์ v1 ในเรโปรอ safe-delete · เลยกำหนด 5 พ.ย. มาแล้ว)</li>
+        <li>ล้าง container ทดสอบและ worktree ของผู้รีวิวหลังรวมงาน</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>คำถามที่ Mr.Foxx ตอบแล้ว (คืน 11-11)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>รหัส</th><th>คำถาม</th><th>คำตอบ</th></tr></thead>
+    <tbody>
+      <tr><td>Q-P1</td><td>1 คอร์สมีตารางเรียนได้หลายวันในสัปดาห์ไหม</td><td>✅ ได้หลายวัน</td></tr>
+      <tr><td>Q-P2</td><td>คอร์สมูลค่า: เงินที่จ่ายร้านมากกว่ามูลค่าบริการได้ไหม</td><td>✅ ได้ (แสดงทั้งสองตัวเลข)</td></tr>
+      <tr><td>Q-P3</td><td>ตัวเลือกเตือนรายคอร์สสำหรับผู้ใช้ Free</td><td>✅ แสดงแต่กดไม่ได้</td></tr>
+      <tr><td>Q-L3</td><td>คอร์สที่พักไว้นับเข้าเพดานไหม</td><td>✅ นับ</td></tr>
+      <tr><td>Q-L6</td><td>อัปเกรด Pro → Max กลางรอบ</td><td>✅ เปลี่ยนทันที คิดส่วนที่เหลือของ Pro เป็นเครดิต (ต้องออกแบบการคำนวณใน PL-B + เขียนลงข้อกำหนด)</td></tr>
+      <tr><td>R2</td><td>บัญชีที่เราให้สิทธิ์ข้อความเตือนโดยไม่คิดเงิน (เช่น โรงเรียนที่มาทดลอง)</td><td>✅ คงไว้ · ได้ทั้งเตือนก่อนคลาสและเตือนก่อนคอร์สหมดอายุ</td></tr>
+      <tr><td>เรียงรายการ</td><td>รายการคอร์สตอนกด "ตัดคอร์ส" ในแชท (สูงสุด 3 ชุด × 11 ใบ)</td><td>✅ เรียงตามที่ใช้ล่าสุด/คลาสใกล้ถึงก่อน + เพิ่มช่องค้นหาในหน้าคอร์สของแอป</td></tr>
+    </tbody>
+  </table></div>
+  <h3>ยังรอตัดสิน</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>เรื่อง</th><th>รายละเอียด</th></tr></thead>
+    <tbody>
+      <tr><td>ปุ่มที่ 4 ของ rich menu</td><td>"ตารางเรียน" ชี้หน้าที่ยังไม่มี · ปุ่มที่ 2 เป็น "คอร์สของฉัน" อยู่แล้ว → เลือกว่าปุ่มที่ 4 จะเป็นอะไร</td></tr>
+      <tr><td>ราคา</td><td>ราคา Pro/Max แบบ 6 และ 12 เดือน · ยังไม่มีตัวเลข</td></tr>
+      <tr><td>รายละเอียดแผน (PL)</td><td>ยอดตั้งต้น 0 ได้ไหม · เตือนแพ็กใกล้หมดกี่วัน/ทางไหน · สิทธิ์ฟรีไม่มีวันหมดได้ไหม · แพ็กต่อเริ่มนับเมื่อไหร่</td></tr>
+    </tbody>
+  </table></div>
+  <p class="stat-l">คำถามฝั่งทีมที่ luffy ตัดสินหรือส่ง law: ให้ P3 เป็นตัวสุดท้ายก่อนย้าย (Q-L1) · PL-A เป็นตัวขวางก่อนย้าย (Q-L2) · ระยะเก็บข้อมูลช่วงแผน (Q-L4) · ต้องแจ้งก่อนเปลี่ยนราคากี่วัน (Q-L5) · ข้อมูลยืนยันพ่อแม่ของระบบเดิม (Q-L7)</p>
+  <div class="callout ok"><svg width="20" height="20" aria-hidden="true"><use href="#i-check"/></svg><div><b>ตัดสินแล้ววันนี้:</b> ป้ายชื่อไม่บังคับจริง (Q1 = 1) · ฟอร์มเพิ่มคอร์ส v3 ต้องเสร็จก่อนย้าย (Q2 = 1) · ข้อกำหนดข้อ 13 = ตัวเลือก 1 · เพดานความรับผิด = ราคา Max 12 เดือน · Free ไม่มี LINE push · ระยะจ่าย 6/12 เดือนเท่านั้น · CI ครามสงบ + เมนู คอร์ส · ประวัติ · บัญชี</div></div>
+</section>
+
+<!-- ===================================================== 10 -->
 <section id="risks">
-  <h2><span class="n">08</span>ความเสี่ยงที่ต้องจับตา</h2>
-  <table>
-    <tr><th>ความเสี่ยง</th><th>ระดับ</th><th>ทางรับมือ</th></tr>
-    <tr><td>รับข้อมูลลูกของครอบครัวอื่นก่อน PDPA จบ</td><td><span class="tag t-bad">สูง</span></td><td>ห้ามรับคนนอกจนกลไกลบ + ประกาศจริงพร้อม</td></tr>
-    <tr><td>โควตา LINE หมด ระบบเงียบ</td><td><span class="tag t-bad">สูง</span></td><td>เตือนที่ 80% · รวมคลาสวันเดียวเป็นข้อความเดียว · หรือจ่ายแพ็ก Basic</td></tr>
-    <tr><td>เปิด login สาธารณะแล้วย้อนกลับไม่ได้</td><td><span class="tag t-warn">กลาง</span></td><td>คงโหมด Developing + Tester ในช่วงทดลอง</td></tr>
-    <tr><td>เตือนตกหล่นครั้งเดียว ความไว้ใจหาย</td><td><span class="tag t-warn">กลาง</span></td><td>health alert ภายนอก · ดู outbox ที่ส่งไม่ผ่าน</td></tr>
-    <tr><td>สร้างของที่ไม่มีใครต้องการ</td><td><span class="tag t-warn">กลาง</span></td><td>คุยผู้ปกครอง 8–10 คนก่อนเขียนโค้ดเพิ่ม</td></tr>
-  </table>
-</section>
+  <h2><span class="n">10</span>ความเสี่ยง และสิ่งที่ยังไม่เคยทำ</h2>
 
-<section id="next">
-  <h2><span class="n">09</span>ขั้นต่อไป</h2>
-  <div class="grid g3">
-    <div class="card"><span class="tag t-acc">เฟส 0</span><h3>ใช้เองจนผ่านเกณฑ์</h3><ul><li>4 สุดสัปดาห์ติดไม่มีเตือนหลุด/ซ้ำ</li><li>≥80% ของคาบตอบผ่าน LINE</li><li>retire v1 (5 พ.ย.)</li><li>ทดสอบ probe ที่เหลือ</li><li>ปิด PDPA</li></ul></div>
-    <div class="card"><span class="tag t-acc">เฟส 0.5</span><h3>ถามก่อนเชิญ</h3><ul><li>คุยผู้ปกครอง 8–10 คน</li><li>คุยโรงเรียน 3–5 แห่ง</li><li>ไปต่อเมื่อ ≥3 ใน 10 เล่าความเจ็บเอง</li></ul></div>
-    <div class="card"><span class="tag t-acc">เฟส 1</span><h3>กลุ่มเชิญปิด</h3><ul><li>3–5 ครัวเรือน 8 สัปดาห์ ฟีเจอร์เต็ม</li><li>วัดการใช้ซ้ำ · ภาระ support</li><li>ถามราคาที่ยอมจ่าย</li></ul></div>
-  </div>
-  <div class="callout acc" style="margin-top:16px">
-    <b>สรุปสั้น:</b> ด้านเทคนิคแข็งแรงและใช้งานจริงแล้วในครอบครัว ส่วนที่ยังขาดคือหลักฐานว่ามีคนอื่นต้องการ และงาน PDPA ก่อนรับข้อมูลคนนอก
-  </div>
+  <div class="callout bad"><svg width="20" height="20" aria-hidden="true"><use href="#i-alert"/></svg><div><b>ยังไม่เคย validate กับโรงเรียนหรือลูกค้าจริงแม้แต่รายเดียว</b> คำแนะนำข้อ 1 ตั้งแต่ handoff 23 ส.ค. คือ <i>"อย่าเพิ่งเขียนโค้ดเพิ่ม — ไปคุยกับโรงเรียน 5–8 แห่ง ถ้าไม่มีใครเจ็บ = ยังไม่ใช่ตลาด"</i> ยังไม่ได้ทำ · ขอบเขตเปลี่ยนจาก "ครอบครัวเท่านั้น" เป็น "ขายให้ได้มากที่สุด" (1 พ.ย.) และตอนนี้เป็น "คอร์สล่วงหน้าทุกชนิด" (10 พ.ย.) แต่ทั้งหมดยังเป็นสมมติฐาน ผู้ใช้จริงมี 1 ครัวเรือนในช่วงทดลองของแอดมิน · ราคาทุกตัวยังไม่ผ่านการทดสอบตลาด</div></div>
+
+  <div class="tbl"><table>
+    <thead><tr><th>ความเสี่ยง</th><th>ทำไมสำคัญ</th><th>ที่ทำไว้ / ทางลด</th></tr></thead>
+    <tbody>
+      <tr><td><b>ตลาดยังไม่ยืนยัน</b></td><td>สร้างระบบใหญ่ก่อนรู้ว่ามีคนจ่าย · เปลี่ยนทิศมาแล้ว 2 ครั้ง</td><td>แผน Free ตลอดช่วยให้ทดลองได้ไม่มีกำแพง · ควรคุยกับร้าน/ผู้ซื้อคอร์สจริงก่อนเปิดรับชำระ</td></tr>
+      <tr><td><b>ขอบเขตงานก่อนย้ายระบบยังใหญ่</b></td><td>เหลือราว 8 ชุดงานก่อนย้าย และอีก 3 ชุดก่อนเปิดรับชำระ · หลายชุดต้องเรียงลำดับ</td><td>แผนขนานของ nami · เลข migration จองไว้ล่วงหน้า · ด่าน journal กันเลขชน</td></tr>
+      <tr><td><b>ย้ายระบบบนข้อมูลจริง</b></td><td>ต้องย้ายตัวตน LINE ไป OA ใหม่ แปลงคอร์ส v2 เป็น v3 และยอดติดลบเดิม</td><td>คู่มือ CUTOVER-V3 · ซ้อมบน staging · คำสั่งตรวจตัวตน OA แบบ fail-closed · snapshot ก่อนย้าย · ขั้นถอยกลับที่ตรวจไฟล์อัตโนมัติ</td></tr>
+      <tr><td><b>ต้นทุนข้อความ LINE</b></td><td>push นับโควตา OA และเกินแล้วคิดเงิน · ข้อความที่ตอบหลังผู้ใช้กดไม่ได้ฟรีเสมอ</td><td>reply-first · Free ไม่มี push · โควตาต่อแผน · หยุดส่งเมื่อ OA ใช้ถึง 80% · บันทึกทุกข้อความที่ส่ง · ราคา OA ต้องยืนยันจากเอกสารล่าสุดก่อนเปิดขาย</td></tr>
+      <tr><td><b>ข้อความเตือนพลาด</b></td><td>ผู้ใช้พึ่งการเตือนแล้วคอร์สหมดอายุ</td><td>ข้อกำหนดบอกชัดว่าเตือนเป็นตัวช่วย ไม่รับประกัน · แถบในแอปไม่พึ่ง push · ส่งครั้งเดียวต่อคลาสด้วย idempotency</td></tr>
+      <tr><td><b>คอร์สมูลค่าถูกมองเป็นการถือเงิน</b></td><td>เสี่ยงกฎหมาย e-money / คุ้มครองผู้บริโภค</td><td>ถ้อยคำ "บันทึกส่วนตัว" · คำต้องห้าม · ข้อชี้แจงแสดงเต็ม · ไม่มีการรับ/โอนเงินแทนร้าน</td></tr>
+      <tr><td><b>Copy เกินความจริง</b></td><td>สัญญาสิ่งที่ยังไม่มี = เสี่ยงกฎหมายและความเชื่อใจ</td><td>เงื่อนไขปล่อยผูกกับฟีเจอร์จริงทุกจุด · law ตรวจทุกคำสัญญา</td></tr>
+      <tr><td><b>VPS เครื่องเดียว</b></td><td>เครื่องล่ม = ทั้งระบบล่ม</td><td>backup เข้ารหัสนอกเครื่อง + ซ้อมกู้รายเดือนเป็นสคริปต์ · health check · ทดสอบโหลดยังเป็นงานในอนาคต (P9)</td></tr>
+      <tr><td><b>ความซับซ้อนของระบบเทียบกับจำนวนผู้ใช้</b></td><td>เทสต์หลายพันตัว รีวิว 2 ชั้นทุกงาน ใช้เวลาและต้นทุนสูง</td><td>เกณฑ์งานเล็กข้ามขั้นได้ · แต่ชั้นรีวิวยังบังคับเพราะเคยมีบั๊กหลุดแม้เทสต์เขียว</td></tr>
+      <tr><td><b>ระบบเก่ายังค้าง</b></td><td>ข้อมูลส่วนบุคคลใน dump เก่ารอลบ · ไฟล์ v1 ในเรโปรอปลด</td><td>อยู่ในรายการงานบ้าน · ต้องทำตามกำหนด PDPA</td></tr>
+    </tbody>
+  </table></div>
 </section>
 
 <footer>
-  สรุปจากเอกสารโปรเจกต์ (PLAN-v2-line · LAUNCH-PLAN · PDPA-PLAN · handoff · git history) ณ 2 พ.ย. 2026 · หน้านี้ตัดข้อมูลส่วนตัวและข้อมูลโครงสร้างระบบที่เป็นความลับออกแล้ว
+  <p><b>ที่มาของข้อมูล:</b> สเปก LINE Course Tracker (10 พ.ย.) · handoff 11 พ.ย. ค่ำ (รวมคำตัดสินช่วงดึกและบรรทัด CORRECTION) · copy draft14 · ข้อกำหนด draft7 · ประกาศความเป็นส่วนตัว draft6 · แผน nami P5c และ P4c-UI/PL/P6 · รายงานรีวิว chopper/jinbe/law/zoro วันที่ 11 พ.ย. · git log ของ branch หลัก v3 · โค้ดหน้าจอและ rich menu ใน trunk · DESIGN.md / PRODUCT.md</p>
+  <p>หน้านี้สะท้อนสถานะ ณ <b>2026-11-11</b> · ภาพหน้าจอในหัวข้อ 4 เป็นภาพจำลอง (wireframe) ของสิ่งที่ตั้งใจทำ ไม่ใช่ภาพหน้าจอจริง · ชื่อคอร์สและตัวเลขในภาพเป็นตัวอย่าง · สิ่งที่ติดป้าย "วางแผน" หรือ "กำลังทำ" ยังไม่มีผู้ใช้ได้ใช้</p>
+  <p>ฉบับก่อนหน้า: สรุป v2 วันที่ 2026-11-02 (ถูกแทนด้วยหน้านี้)</p>
 </footer>
 
 </div>
